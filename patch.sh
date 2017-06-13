@@ -99,7 +99,7 @@ if [ -z "$dir1" ]; then
 fi
 
 if [ -z "$dir2" ]; then
-	dir2="$dir1_patched"
+	dir2="${dir1}_patched"
 fi
 
 chooseDelta "$deltaChoice"
