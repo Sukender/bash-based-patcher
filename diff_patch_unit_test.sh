@@ -12,18 +12,17 @@
 #  - Test various options (especially -p)
 
 # Dependencies, error codes, documentation: see "diff_patch_config.sh"
-source "diff_patch_config.sh" || exit 4
-
-initDir="$PWD"
+#initDir="$PWD"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
+source "$DIR/diff_patch_config.sh" || exit 4
 
 baseDir="_diff_unit_test"
 
 #set -e
 err_report() {
 	echo "Error on line $1"
-	cd $DIR
-#	rm -r "$baseDir"
+	cd "$DIR"
+	rm -r "$baseDir"
 	exit 1
 }
 trap 'err_report $LINENO' ERR
@@ -49,8 +48,8 @@ cp "1/c.txt" "2/c.txt"
 echo "ddd-dddddddd-ddddd" > "2/d.txt"		# Will be added
 
 # Operate
-../diff.sh "1" "2" -p delta.patch		# Build
-../patch.sh "1" -p delta.patch "2_"		# Apply
+"$DIR/diff.sh" "1" "2" -p delta.patch		# Build
+"$DIR//patch.sh" "1" -p delta.patch "2_"	# Apply
 
 # Test
 if [ ! -f "2_/a.txt" ]; then err_report $LINENO; fi
