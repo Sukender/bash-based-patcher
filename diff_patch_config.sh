@@ -1,5 +1,5 @@
 #!/bin/bash
-# Configuration, documentation, and common functions & variables for Sukender's rdiff-based patcher
+# Configuration, documentation, and common functions & variables for Sukender's bash-based patcher
 # Author: Sukender (Benoit Neil)
 # Licence: WTFPL v2 (see COPYING.txt)
 # Version: 0.2
@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------------
 # Constants
 toolVersion="0.2"
-toolNameUnversionned="Sukender's rdiff-based patcher"
+toolNameUnversionned="Sukender's bash-based patcher"
 toolName="$toolNameUnversionned v$toolVersion"
 separatorDisplay="--------------------------------------------------------------------------------"
 defaultpatchfile="patch.7z"
@@ -17,12 +17,12 @@ defaultpatchfile="patch.7z"
 
 doc_dependencies="Dependencies:
   - tar to make the directory a single stream (file).
-  - rdiff to make the binary diff.
+  - rdiff or xdelta3 to make the binary diff.
   - named pipes to avoid storing intermediate files to disk (much faster: everything in memory).
   - 7-zip (7za) to LZMA compress the output and make an efficient patch.
   - [patch only] wget to retreive a distant patch.
 All-in-one apt-style command line:
-  sudo apt install tar rdiff p7zip wget
+  sudo apt install tar rdiff xdelta3 p7zip wget
 "
 
 doc_errorCodes="Error codes:
@@ -67,7 +67,48 @@ displayDoc() {
 }
 
 # --------------------------------------------------------------------------------
+# Delta tools availability
+
+evalHas() {
+	which "$1" > /dev/null 2> /dev/null
+	if [[ "$?" == 0 ]]; then
+		eval "has_$1=1"
+	else
+		eval "has_$1=0"
+	fi
+}
+
+evalHas xdelta3
+evalHas rdiff
+
+# chooseDelta_explicit userChoice currentDeltaIteration
+chooseDelta_explicit() {
+	hasVariable="has_$2"
+	if [ "$1" == "$2" ]; then
+		if [[ "${!hasVariable}" != "0" ]]; then
+			delta="$2"
+		else
+			echo "Delta tool '$2' was choosen but seems not installed and in your path."
+		fi
+	fi
+}
+
+chooseDelta() {
+	# Honor explicit choices if possible
+	chooseDelta_explicit "$1" "rdiff"
+	chooseDelta_explicit "$1" "xdelta3"
+	#if [ "$1" == "xdelta"  ] && [[ "$has_xdelta3" != "0" ]]; then delta="xdelta3"; return; fi		# Alias
+
+	# Default choice
+	if [[ "$has_xdelta3" != "0" ]]; then delta="xdelta3"; return; fi
+	if [[ "$has_rdiff"   != "0" ]]; then delta="rdiff";   return; fi
+	
+	echo "Error: your need either rdiff or xdelta3 installed and in your path. Please install."
+	exit 1
+}
+
+# --------------------------------------------------------------------------------
 # Default-initialized variables
 verbose=0
 patchfile="$defaultpatchfile"
-
+delta="rdiff"		# TEMP/TEST/DEBUG

@@ -8,15 +8,6 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
 source "$DIR/diff_patch_config.sh" || exit 4
 
-# Theorical call would be:
-#   7za x -so "$patchFile" > pipe2ar & tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & rdiff patch pipe1 pipe2ar pipe2 & tar -x --directory="$dir2" . > pipe2
-# Unfortunately, rdiff needs the base (here 'pipe1') to be seekable. But named pipes aren't (even if seekable pipes may have been proposed).
-# We thus rely on an intermediate file.
-#
-#rm pipe1 pipe2 pipe2ar 2> /dev/null
-#mkfifo pipe1 pipe2 pipe2ar
-#rm pipe1 pipe2 pipe2ar
-
 intermediate1="1.tar"
 
 # --------------------------------------------------------------------------------
@@ -105,6 +96,8 @@ if [ -z "$dir2" ]; then
 	dir2="$dir1_patched"
 fi
 
+chooseDelta ""
+
 if [[ $verbose != 0 ]]; then
 	echo "$toolName"
 	echo $separatorDisplay
@@ -112,6 +105,7 @@ if [[ $verbose != 0 ]]; then
 	echo "Applying patch on '$dir1', to '$dir2'"
 	echo "Patch file: $patchfile"
 	echo "Patch URL: $patchUrl"
+	echo "Delta: $delta"
 fi
 
 # --------------------------------------------------------------------------------
@@ -123,22 +117,39 @@ if [ -n "$patchUrl" ]; then
 	wget "$patchUrl" -O "$patchfile" || exit 3
 fi
 
-echo $separatorDisplay
-echo "[$(date +%H:%M:%S)] Creating intermediate file before applying patch. This may take a while."
-echo ""
-
-rm "$intermediate1" pipe2 pipe2ar 2> /dev/null
 rm -r "$dir2" 2> /dev/null
 mkdir -p "$dir2"
-mkfifo pipe2 pipe2ar || exit 2
-tar -cf "$intermediate1" --sort=name --no-auto-compress --directory="$dir1" . || exit 2
+
+# (rdiff only) Theorical call would be:
+#   7za x -so "$patchfile" > pipe2ar & tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & rdiff patch pipe1 pipe2ar pipe2 & tar -x --directory="$dir2" . < pipe2
+# Unfortunately, rdiff needs the base (here 'pipe1') to be seekable. But named pipes aren't (even if seekable pipes may have been proposed).
+# We thus rely on an intermediate file.
+if [ "$delta" == "rdiff" ]; then
+	echo $separatorDisplay
+	echo "[$(date +%H:%M:%S)] Creating intermediate file before applying patch. This may take a while."
+	echo ""
+	rm "$intermediate1" 2> /dev/null
+	tar -cf "$intermediate1" --sort=name --no-auto-compress --directory="$dir1" . || exit 2
+fi
 
 echo $separatorDisplay
 echo "[$(date +%H:%M:%S)] Applying patch. This may take a while."
 echo ""
 
-7za x -so "$patchfile" > pipe2ar & rdiff patch "$intermediate1" pipe2ar pipe2 & tar -xf pipe2 --directory="$dir2" . || exit 2
-rm "$intermediate1" pipe2 pipe2ar
+if [ "$delta" == "xdelta3" ]; then
+	# xdelta3
+	rm pipe1 pipe2 pipe2ar 2> /dev/null
+	mkfifo pipe1 pipe2 pipe2ar || exit 2
+	#7za x -so "$patchfile" > pipe2ar & tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & xdelta3 -d -s pipe1 pipe2ar pipe2 & tar -x --directory="$dir2" . < pipe2
+	tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & xdelta3 -d -s pipe1 "$patchfile" pipe2 & tar -x --directory="$dir2" . < pipe2
+	rm pipe1 pipe2 pipe2ar
+else
+	# rdiff
+	rm pipe2 pipe2ar 2> /dev/null
+	mkfifo pipe2 pipe2ar || exit 2
+	7za x -so "$patchfile" > pipe2ar & rdiff patch "$intermediate1" pipe2ar pipe2 & tar -xf pipe2 --directory="$dir2" . || exit 2
+	rm "$intermediate1" pipe2 pipe2ar
+fi
 
 echo $separatorDisplay
 echo "[$(date +%H:%M:%S)] Patch applied."

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Unit test for Sukender's rdiff-based patcher.
+# Unit test for Sukender's bash-based patcher.
 # This is veeeeeery basic, and should be improved with true unit test framework(s).
 #
 # Author: Sukender (Benoit Neil)
@@ -63,7 +63,7 @@ read line < "2_/d.txt"; if [ "$line" != "ddd-dddddddd-ddddd" ]; then err_report 
 
 # Clear
 cd -
-rm -rf "$baseDir"
+#rm -rf "$baseDir"
 
 echo ""
 echo $separatorDisplay
