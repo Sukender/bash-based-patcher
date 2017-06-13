@@ -2,7 +2,7 @@
 # Applies a compressed binary diff (patch) on a directory, creating a copy (ie. not in-place).
 # Author: Sukender (Benoit Neil)
 # Licence: WTFPL v2 (see COPYING.txt)
-# Version: 0.2
+# Version: 0.3
 
 # Dependencies, error codes, documentation: see "diff_patch_config.sh"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
@@ -47,6 +47,9 @@ usage() {
 	echo "      Downloads URL as the patch to apply."
 	echo "  -p, --patch NAME"
 	echo "      Uses the patch file NAME (default: '$defaultpatchfile')."
+	echo "  -D, --delta NAME"
+	echo "      Chooses the delta-compression tool NAME. Possibles choices are rdiff, xdelta3."
+	echo "      You *MUST* select the one used for compression. There is no auto-detection."
 	echo "  -v, --verbose"
 	echo "      Adds more information."
 	echo "  --"
@@ -72,6 +75,9 @@ case "$1" in
 	-p|--patch)
 		shift; patchfile="$1"; shift;
 		;;
+	-D|--delta)
+		shift; deltaChoice="$1"; shift;
+		;;
 	-g|--get)
 		shift; patchUrl="$1"; shift;
 		;;
@@ -96,7 +102,7 @@ if [ -z "$dir2" ]; then
 	dir2="$dir1_patched"
 fi
 
-chooseDelta ""
+chooseDelta "$deltaChoice"
 
 if [[ $verbose != 0 ]]; then
 	echo "$toolName"
@@ -140,8 +146,8 @@ if [ "$delta" == "xdelta3" ]; then
 	# xdelta3
 	rm pipe1 pipe2 pipe2ar 2> /dev/null
 	mkfifo pipe1 pipe2 pipe2ar || exit 2
-	#7za x -so "$patchfile" > pipe2ar & tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & xdelta3 -d -s pipe1 pipe2ar pipe2 & tar -x --directory="$dir2" . < pipe2
-	tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & xdelta3 -d -s pipe1 "$patchfile" pipe2 & tar -x --directory="$dir2" . < pipe2
+	7za x -so "$patchfile" > pipe2ar & tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & xdelta3 -d -s pipe1 pipe2ar pipe2 & tar -x --directory="$dir2" . < pipe2
+	#tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & xdelta3 -d -s pipe1 "$patchfile" pipe2 & tar -x --directory="$dir2" . < pipe2
 	rm pipe1 pipe2 pipe2ar
 else
 	# rdiff

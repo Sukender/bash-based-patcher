@@ -2,11 +2,10 @@
 # Configuration, documentation, and common functions & variables for Sukender's bash-based patcher
 # Author: Sukender (Benoit Neil)
 # Licence: WTFPL v2 (see COPYING.txt)
-# Version: 0.2
 
 # --------------------------------------------------------------------------------
 # Constants
-toolVersion="0.2"
+toolVersion="0.3"
 toolNameUnversionned="Sukender's bash-based patcher"
 toolName="$toolNameUnversionned v$toolVersion"
 separatorDisplay="--------------------------------------------------------------------------------"
@@ -111,4 +110,3 @@ chooseDelta() {
 # Default-initialized variables
 verbose=0
 patchfile="$defaultpatchfile"
-delta="rdiff"		# TEMP/TEST/DEBUG

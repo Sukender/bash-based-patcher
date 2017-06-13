@@ -2,7 +2,7 @@
 # Creates a compressed binary diff (patch) between two directories.
 # Author: Sukender (Benoit Neil)
 # Licence: WTFPL v2 (see COPYING.txt)
-# Version: 0.2
+# Version: 0.3
 
 # Dependencies, error codes, documentation: see "diff_patch_config.sh"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
@@ -42,6 +42,10 @@ usage() {
 	echo "  -p, --patch NAME"
 	echo "      Changes the output patch file name to NAME (default: '$defaultpatchfile')."
 	echo "      File is always overwritten without confirmation."
+	echo "  -D, --delta NAME"
+	echo "      Chooses the delta-compression tool NAME. Possibles choices are rdiff, xdelta3."
+	echo "      rdiff *MAY* have better compression on data files, but be slightly"
+	echo "      slower (especially upon decompression)"
 	echo "  -v, --verbose"
 	echo "      Adds more information."
 	echo "  --"
@@ -67,6 +71,9 @@ case "$1" in
 	-p|--patch)
 		shift; patchfile="$1"; shift;
 		;;
+	-D|--delta)
+		shift; deltaChoice="$1"; shift;
+		;;
 	--)
 		shift;
 		break;
@@ -84,7 +91,7 @@ if [ -z "$dir1" ] || [ -z "$dir2" ]; then
 	exit 1;
 fi
 
-chooseDelta ""
+chooseDelta "$deltaChoice"
 
 if [[ $verbose != 0 ]]; then
 	echo "$toolName"
@@ -106,9 +113,12 @@ if [ "$delta" == "xdelta3" ]; then
 	# xdelta3
 	rm pipe1 pipe2 "$patchfile" 2> /dev/null
 	mkfifo pipe1 pipe2 || exit 2
-	#tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & tar -c --sort=name --no-auto-compress --directory="$dir2" . > pipe2 & xdelta3 -e -S "none" -s pipe1 pipe2 | 7za a -mx9 -si "$patchfile" || exit 2
-	#tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & tar -c --sort=name --no-auto-compress --directory="$dir2" . > pipe2 & xdelta3 -e -s pipe1 pipe2 | 7za a -mx9 -si "$patchfile" || exit 2
-	tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & tar -c --sort=name --no-auto-compress --directory="$dir2" . > pipe2 & xdelta3 -e -S lzma -s pipe1 pipe2 "$patchfile" || exit 2
+
+	# TODO try the xdelta invocation: XDELTA="-s source" tar --use-compress-program=xdelta3 -cf target.vcdiff target
+
+	#tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & tar -c --sort=name --no-auto-compress --directory="$dir2" . > pipe2 & xdelta3 -e -9 -S "none" -s pipe1 pipe2 | 7za a -mx9 -si "$patchfile" || exit 2
+	tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & tar -c --sort=name --no-auto-compress --directory="$dir2" . > pipe2 & xdelta3 -e -9 -s pipe1 pipe2 | 7za a -mx9 -si "$patchfile" || exit 2
+	#tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & tar -c --sort=name --no-auto-compress --directory="$dir2" . > pipe2 & xdelta3 -e -9 -S lzma -s pipe1 pipe2 "$patchfile" || exit 2
 	rm pipe1 pipe2
 else
 	# rdiff
