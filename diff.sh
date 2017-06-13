@@ -1,26 +1,12 @@
 #!/bin/bash
 # Creates a compressed binary diff (patch) between two directories.
 # Author: Sukender (Benoit Neil)
-# Licence: WTFPL v0
+# Licence: WTFPL v2
 # Version: 0.2
 
-# This uses :
-#   - 'tar' to make the directory a single stream (file)
-#   - 'rdiff' to make the binary diff
-#   - named pipes to avoid storing intermediate files to disk (much faster: everything in memory).
-#   - 7-zip (7za) to LZMA compress the output and make an efficient patch.
-
-# Error codes
-# 0: Ok
-# 1: Error in arguments
-# 2: Error in process
-
-toolName="Sukender's rdiff-based patcher"
-separatorDisplay="--------------------------------------------------------------------------------"
-
-defaultpatchfile="patch.7z"
-patchfile="$defaultpatchfile"
-verbose=0
+# Dependencies, error codes, documentation: see "diff_patch_config.sh"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
+source "$DIR/diff_patch_config.sh" || exit 4
 
 # --------------------------------------------------------------------------------
 # Parameters parsing and usage
@@ -39,15 +25,20 @@ positionalOption() {
 }
 
 usage() {
+	echo ""
+	echo "$toolName"
 	echo "Creates a compressed binary diff (patch) between two directories."
 	echo
 	echo "Syntax:"
 	echo "  diff [options] oldDirectory newDirectory"
 	echo
 	echo "Options:"
-	echo
 	echo "  -h, --help"
-	echo "      This help text."
+	echo "      Displays this help text and exits."
+	echo "  --man"
+	echo "      Displays all documentation available and exits."
+	echo "  --version"
+	echo "      Displays a short (parsable) version information and exits."
 	echo "  -p, --patch NAME"
 	echo "      Changes the output patch file name to NAME (default: '$defaultpatchfile')."
 	echo "      File is always overwritten without confirmation."
@@ -66,6 +57,12 @@ case "$1" in
 		;;
 	-h|--help)
 		shift; usage; exit 0;
+		;;
+	--man)
+		shift; usage; displayDoc; exit 0;
+		;;
+	--version)
+		shift; echo "$toolVersion"; exit 0;
 		;;
 	-p|--patch)
 		shift; patchfile="$1"; shift;

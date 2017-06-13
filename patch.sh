@@ -1,21 +1,12 @@
 #!/bin/bash
 # Applies a compressed binary diff (patch) on a directory, creating a copy (ie. not in-place).
 # Author: Sukender (Benoit Neil)
-# Licence: WTFPL v0
+# Licence: WTFPL v2
 # Version: 0.2
 
-# This uses :
-#   - 'tar' to make the directory a single stream (file)
-#   - 'rdiff' to make the binary diff
-#   - named pipes to avoid storing intermediate files to disk (much faster: everything in memory).
-#   - 7-zip (7za) to LZMA compress the output and make an efficient patch.
-#   - wget to retreive a distant patch.
-
-# Error codes
-# 0: Ok
-# 1: Error in arguments
-# 2: Error in process
-# 3: Error in downloading patch
+# Dependencies, error codes, documentation: see "diff_patch_config.sh"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
+source "$DIR/diff_patch_config.sh" || exit 4
 
 # Theorical call would be:
 #   7za x -so "$patchFile" > pipe2ar & tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & rdiff patch pipe1 pipe2ar pipe2 & tar -x --directory="$dir2" . > pipe2
@@ -26,13 +17,7 @@
 #mkfifo pipe1 pipe2 pipe2ar
 #rm pipe1 pipe2 pipe2ar
 
-toolName="Sukender's rdiff-based patcher"
-separatorDisplay="--------------------------------------------------------------------------------"
-
-defaultpatchfile="patch.7z"
-patchfile="$defaultpatchfile"
 intermediate1="1.tar"
-verbose=0
 
 # --------------------------------------------------------------------------------
 # Parameters parsing and usage
@@ -51,6 +36,8 @@ positionalOption() {
 }
 
 usage() {
+	echo ""
+	echo "$toolName"
 	echo "Applies a compressed binary diff (patch) on a directory, creating a copy (ie. not in-place)."
 	echo
 	echo "Syntax:"
@@ -60,7 +47,11 @@ usage() {
 	echo "Options:"
 	echo
 	echo "  -h, --help"
-	echo "      This help text."
+	echo "      Displays this help text and exits."
+	echo "  --man"
+	echo "      Displays all documentation available and exits."
+	echo "  --version"
+	echo "      Displays a short (parsable) version information and exits."
 	echo "  -g, --get URL"
 	echo "      Downloads URL as the patch to apply."
 	echo "  -p, --patch NAME"
@@ -80,6 +71,12 @@ case "$1" in
 		;;
 	-h|--help)
 		shift; usage; exit 0;
+		;;
+	--man)
+		shift; usage; displayDoc; exit 0;
+		;;
+	--version)
+		shift; echo "$toolVersion"; exit 0;
 		;;
 	-p|--patch)
 		shift; patchfile="$1"; shift;
@@ -105,7 +102,7 @@ if [ -z "$dir1" ]; then
 fi
 
 if [ -z "$dir2" ]; then
-	dir2="$1_patched"
+	dir2="$dir1_patched"
 fi
 
 if [[ $verbose != 0 ]]; then

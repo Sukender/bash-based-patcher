@@ -3,18 +3,20 @@
 # This is veeeeeery basic, and should be improved with true unit test framework(s).
 #
 # Author: Sukender (Benoit Neil)
-# Licence: WTFPL v0
-# Version: 0.1
+# Licence: WTFPL v2
+# Version (of the unit test): 0.1
+# Version (of the tested tool): 0.2
 
 # TODO:
 #  - Test patch upload / retreival
+#  - Test various options (especially -p)
+
+# Dependencies, error codes, documentation: see "diff_patch_config.sh"
+source "diff_patch_config.sh" || exit 4
 
 initDir="$PWD"
-# Script dir
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
 
-toolName="Sukender's rdiff-based patcher"
-separatorDisplay="--------------------------------------------------------------------------------"
 baseDir="_diff_unit_test"
 
 #set -e
