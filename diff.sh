@@ -120,7 +120,7 @@ else
 fi
 
 echo $separatorDisplay
-echo "[$(date +%H:%M:%S)] Patch created."
+echo "[$(date +%H:%M:%S)] Patch created. Size = $(du -sb "$patchfile" | awk '{ print $1 }') ($(du -sh "$patchfile" | awk '{ print $1 }'))"
 echo ""
 
 # --------------------------------------------------------------------------------
