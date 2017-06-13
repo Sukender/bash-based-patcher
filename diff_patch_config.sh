@@ -95,8 +95,11 @@ chooseDelta_explicit() {
 chooseDelta() {
 	# Honor explicit choices if possible
 	chooseDelta_explicit "$1" "rdiff"
+	if [ -n "$delta" ]; then return; fi
 	chooseDelta_explicit "$1" "xdelta3"
+	if [ -n "$delta" ]; then return; fi
 	#if [ "$1" == "xdelta"  ] && [[ "$has_xdelta3" != "0" ]]; then delta="xdelta3"; return; fi		# Alias
+	#if [ -n "$delta" ]; then return; fi
 
 	# Default choice
 	if [[ "$has_xdelta3" != "0" ]]; then delta="xdelta3"; return; fi
