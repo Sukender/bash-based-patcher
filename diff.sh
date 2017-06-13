@@ -1,7 +1,7 @@
 #!/bin/bash
 # Creates a compressed binary diff (patch) between two directories.
 # Author: Sukender (Benoit Neil)
-# Licence: WTFPL v2
+# Licence: WTFPL v2 (see COPYING.txt)
 # Version: 0.2
 
 # Dependencies, error codes, documentation: see "diff_patch_config.sh"

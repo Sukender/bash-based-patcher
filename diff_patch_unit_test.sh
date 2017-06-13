@@ -3,7 +3,7 @@
 # This is veeeeeery basic, and should be improved with true unit test framework(s).
 #
 # Author: Sukender (Benoit Neil)
-# Licence: WTFPL v2
+# Licence: WTFPL v2 (see COPYING.txt)
 # Version (of the unit test): 0.1
 # Version (of the tested tool): 0.2
 
