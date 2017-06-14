@@ -10,14 +10,82 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
 source "$DIR/bbp_config.sh" || exit 4
 
-archive="$(basename "$1")$archiveSuffix"
+# --------------------------------------------------------------------------------
+# Parameters parsing and usage
+
+positionalOption() {
+	if [ -z "$dir1" ]; then
+		dir1="$1"
+	else
+		echo "Unrecognized option: $1"
+	fi
+}
+
+usage() {
+	echo ""
+	echo "$toolName"
+	echo "Creates an archive useable by diff/patch as a base directory."
+	echo
+	echo "Syntax:"
+	echo "  ar [options] directory"
+	echo
+	echo "Options:"
+	echo "  -h, --help"
+	echo "      Displays this help text and exits."
+	echo "  --man"
+	echo "      Displays all documentation available and exits."
+	echo "  --version"
+	echo "      Displays a short (parsable) version information and exits."
+	# echo "  -v, --verbose"
+	# echo "      Adds a level of verbosity (more information). Default level = $defaultVerbosity."
+	# echo "  -q, --quiet"
+	# echo "      Removes a level of verbosity (more information). Default level = $defaultVerbosity."
+	# echo "      Please note that even level 0 is not absolutely quiet."
+	echo "  --"
+	echo "      Do not interpret any more arguments as options."
+	echo
+}
+
+
+while [ "$#" -gt 0 ]; do
+case "$1" in
+	-v|--verbose)
+		shift; verbosity=$(( verbosity + 1 ));
+		;;
+	-q|--quiet)
+		shift; verbosity=$(( verbosity - 1 ));
+		;;
+	-h|--help)
+		shift; usage; exit 0;
+		;;
+	--man)
+		shift; usage; displayDoc; exit 0;
+		;;
+	--version)
+		shift; echo "$toolVersion"; exit 0;
+		;;
+	--)
+		shift;
+		break;
+		;;
+	# an option argument, continue
+	*)
+		positionalOption "$1"
+		shift;
+		;;
+esac
+done
+
+# --------------------------------------------------------------------------------
+
+archive="$(basename "$dir1")$archiveSuffix"
 
 rm "$archive" 2> /dev/null
 if [[ "$has_pv" != "0" ]]; then
-	tar -Jcf - --directory="$1" . | pv > "$archive"
+	tar -Jcf - --directory="$dir1" . | pv > "$archive"
 	res=${PIPESTATUS[0]}
 else
-	tar -acf "$archive" --directory="$1" . --checkpoint=.10
+	tar -acf "$archive" --directory="$dir1" . --checkpoint=.10
 	res="$?"
 fi
 
