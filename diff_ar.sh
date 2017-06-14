@@ -11,7 +11,7 @@ source "$DIR/diff_patch_config.sh" || exit 4
 
 archive="$(basename "$1")$archiveSuffix"
 
-rm "archive" > /dev/null
+rm "$archive" 2> /dev/null
 if [[ "$has_pv" != "0" ]]; then
 	XZ_OPT=-9 tar -Jcf - --directory="$1" . | pv > "$archive"
 	res=${PIPESTATUS[0]}
