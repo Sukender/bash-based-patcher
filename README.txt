@@ -23,6 +23,7 @@ What is was not meant for:
 
 To-do:
   - Make it work from any working dir, not just the parent directory of base dir (= dir1).
+  - Test all pipe statuses (${PIPESTATUS[i]}) and async statuses everywhere, and stop on error.
   - Handle upload & downloads of patches (FTP or such).
   - "make install" should have a way to configure install path.
   - Add a resilience towards "small changes" in base directories (maintainer and users).
