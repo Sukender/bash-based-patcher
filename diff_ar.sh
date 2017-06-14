@@ -13,10 +13,10 @@ archive="$(basename "$1")$archiveSuffix"
 
 rm "$archive" 2> /dev/null
 if [[ "$has_pv" != "0" ]]; then
-	XZ_OPT=-9 tar -Jcf - --directory="$1" . | pv > "$archive"
+	tar -Jcf - --directory="$1" . | pv > "$archive"
 	res=${PIPESTATUS[0]}
 else
-	XZ_OPT=-9 tar -acf "$archive" --directory="$1" . --checkpoint=.10
+	tar -acf "$archive" --directory="$1" . --checkpoint=.10
 	res="$?"
 fi
 

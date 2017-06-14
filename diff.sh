@@ -131,9 +131,9 @@ if [ "$delta" == "xdelta3" ]; then
 	# xdelta3
 
 	# TODO try the xdelta invocation? : XDELTA="-s source" tar --use-compress-program=xdelta3 -cf target.vcdiff target
-	#$tarDir --directory="$dir1" . > pipe1 & $tarDir --directory="$dir2" . > pipe2 & xdelta3 -e -9 -S "none" -s pipe1 pipe2 | 7za a -mx9 -si "$patchfile" || exit 2
+	#$tarDir --directory="$dir1" . > pipe1 & $tarDir --directory="$dir2" . > pipe2 & xdelta3 -e -9 -S "none" -s pipe1 pipe2 | xz > "$patchfile" || exit 2
 	#$tarDir --directory="$dir1" . > pipe1 &
-	$tarDir --directory="$dir2" . > pipe2 & xdelta3 -e -9 -s pipe1 pipe2 | 7za a -mx9 -si "$patchfile" || exit 2
+	$tarDir --directory="$dir2" . > pipe2 & xdelta3 -e -9 -s pipe1 pipe2 | xz > "$patchfile" || exit 2
 	#$tarDir --directory="$dir1" . > pipe1 & $tarDir --directory="$dir2" . > pipe2 & xdelta3 -e -9 -S lzma -s pipe1 pipe2 "$patchfile" || exit 2
 else
 	# rdiff
@@ -141,7 +141,7 @@ else
 	rm pipe1sig 2> /dev/null
 	mkfifo pipe1sig || exit 2
 	#$tarDir --directory="$dir1" . > pipe1 &
-	rdiff signature pipe1 pipe1sig & $tarDir --directory="$dir2" . > pipe2 & rdiff delta pipe1sig pipe2 | 7za a -mx9 -si "$patchfile" || exit 2
+	rdiff signature pipe1 pipe1sig & $tarDir --directory="$dir2" . > pipe2 & rdiff delta pipe1sig pipe2 | xz > "$patchfile" || exit 2
 		# > /dev/null
 	rm pipe1sig
 fi

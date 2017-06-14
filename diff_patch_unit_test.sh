@@ -80,7 +80,7 @@ testSimple() {
 	testSimple_Test
 
 	# Clear
-	cd -
+	cd - > /dev/null
 	rm -rf "$baseDir"
 }
 
@@ -108,7 +108,7 @@ testFromArchive() {
 	testSimple_Test    # As the previous test
 
 	# Clear
-	cd -
+	cd - > /dev/null
 	rm -rf "$baseDir"
 }
 

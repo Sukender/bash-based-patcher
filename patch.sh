@@ -138,7 +138,7 @@ rm pipe1 pipe2 pipe2ar 2> /dev/null
 mkfifo pipe1 pipe2 pipe2ar || exit 2
 
 # (rdiff only) Theorical call would be:
-#   7za x -so "$patchfile" > pipe2ar & tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & rdiff patch pipe1 pipe2ar pipe2 & tar -x --directory="$dir2" . < pipe2
+#   xz -kd "$patchfile" --stdout > pipe2ar & tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & rdiff patch pipe1 pipe2ar pipe2 & tar -x --directory="$dir2" . < pipe2
 # Unfortunately, rdiff needs the base (here 'pipe1') to be seekable. But named pipes aren't (even if seekable pipes may have been proposed).
 # We thus rely on an intermediate file.
 if [ "$delta" != "xdelta3" ]; then
@@ -162,11 +162,11 @@ fi
 if [ "$delta" == "xdelta3" ]; then
 	# xdelta3
 	readBase "$dir1" pipe1		# Handles dir1 as an archive or dir
-	7za x -so "$patchfile" > pipe2ar & xdelta3 -d -s pipe1 pipe2ar pipe2 & tar -x --directory="$dir2" . < pipe2
+	xz -kd "$patchfile" --stdout > pipe2ar & xdelta3 -d -s pipe1 pipe2ar pipe2 & tar -x --directory="$dir2" . < pipe2
 	#xdelta3 -d -s pipe1 "$patchfile" pipe2 & tar -x --directory="$dir2" . < pipe2
 else
 	# rdiff
-	7za x -so "$patchfile" > pipe2ar & rdiff patch "$intermediate1" pipe2ar pipe2 & tar -xf pipe2 --directory="$dir2" . || exit 2
+	xz -kd "$patchfile" --stdout > pipe2ar & rdiff patch "$intermediate1" pipe2ar pipe2 & tar -xf pipe2 --directory="$dir2" . || exit 2
 	rm "$intermediate1"
 fi
 rm pipe1 pipe2 pipe2ar

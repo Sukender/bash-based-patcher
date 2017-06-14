@@ -9,7 +9,7 @@ toolVersion="0.3"
 toolNameUnversionned="Sukender's bash-based patcher"
 toolName="$toolNameUnversionned v$toolVersion"
 separatorDisplay="--------------------------------------------------------------------------------"
-defaultpatchfile="patch.7z"
+defaultpatchfile="patch.xz"
 if [ -z "$defaultVerbosity" ]; then defaultVerbosity=1; fi
 
 BBD_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
@@ -21,6 +21,7 @@ arTool="$BBD_HOME/diff_ar.sh"
 
 # Other
 archiveSuffix=".reference.tar.xz"		# "-J" option of tar is used to select the XZ compressor. Do not change extension without changing tar arguments.
+XZ_OPT=-9	# Global compression ratio for .tar.xz
 
 # --------------------------------------------------------------------------------
 # Documentation
@@ -29,11 +30,11 @@ doc_dependencies="Dependencies:
   - tar to make the directory a single stream (file).
   - rdiff or xdelta3 to make the binary diff.
   - named pipes to avoid storing intermediate files to disk (much faster: everything in memory).
-  - 7-zip (7za) and LZMA for tar (xz-utils) to compress the output and make patches space-efficient.
+  - XZ (xz-utils) for tar to compress the output and make patches space-efficient.
   - (optional) pv to display progress.
   - [patch only] wget to retreive a distant patch.
 All-in-one apt-style command line:
-  sudo apt install tar rdiff xdelta3 p7zip xz-utils wget pv
+  sudo apt install tar rdiff xdelta3 xz-utils wget pv
 "
 
 doc_errorCodes="Error codes:
@@ -126,7 +127,7 @@ chooseDelta() {
 	# Default choice
 	if [[ "$has_xdelta3" != "0" ]]; then delta="xdelta3"; return; fi
 	if [[ "$has_rdiff"   != "0" ]]; then delta="rdiff";   return; fi
-	
+
 	echo "Error: your need either rdiff or xdelta3 installed and in your path. Please install."
 	exit 1
 }
@@ -135,7 +136,6 @@ chooseDelta() {
 # Mandatory tools availability
 
 assertHas tar tar
-assertHas "7za" "p7zip"
 assertHas wget wget
 assertHas xz "xz-utils"
 
