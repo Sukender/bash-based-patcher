@@ -85,15 +85,15 @@ testSimple() {
 }
 
 # Test may fallback to another delta tool. This is intended.
-testSimple "rdiff"
-testSimple "xdelta3"
+# testSimple "rdiff"
+# testSimple "xdelta3"
 
 # --------------------------------------------------------------------------------
 # Test 2 - As test 1 but base directory may now be an archive
 
 # testFromArchive deltaTool diffSourceName patchSourceName
 testFromArchive() {
-	testLabel "archive $1 '$2' '$3'"
+	testLabel "Archive $1 '$2' '$3'"
 
 	# Setup
 	testSimple_Setup   # As the previous test
@@ -112,15 +112,49 @@ testFromArchive() {
 	rm -rf "$baseDir"
 }
 
-testFromArchive "xdelta3" "1$archiveSuffix" "1$archiveSuffix"    # Build from archive, apply from archive
-testFromArchive "xdelta3" "1" "1$archiveSuffix"                  # Build from directory, apply from archive
-testFromArchive "xdelta3" "1$archiveSuffix" "1"                  # Build from archive, apply from directory
+# testFromArchive "xdelta3" "1$archiveSuffix" "1$archiveSuffix"    # Build from archive, apply from archive
+# testFromArchive "xdelta3" "1" "1$archiveSuffix"                  # Build from directory, apply from archive
+# testFromArchive "xdelta3" "1$archiveSuffix" "1"                  # Build from archive, apply from directory
 
-testFromArchive "rdiff"   "1$archiveSuffix" "1$archiveSuffix"    # Build from archive, apply from archive
-testFromArchive "rdiff"   "1" "1$archiveSuffix"                  # Build from directory, apply from archive
-testFromArchive "rdiff"   "1$archiveSuffix" "1"                  # Build from archive, apply from directory
+# testFromArchive "rdiff"   "1$archiveSuffix" "1$archiveSuffix"    # Build from archive, apply from archive
+# testFromArchive "rdiff"   "1" "1$archiveSuffix"                  # Build from directory, apply from archive
+# testFromArchive "rdiff"   "1$archiveSuffix" "1"                  # Build from archive, apply from directory
 
 # --------------------------------------------------------------------------------
+# Test from a directory that is not the parent of dir1 and dir2
+
+testSubdir_noLabel() {
+	# Setup
+	testSimple_Setup
+	cd - > /dev/null
+
+	# Operate
+	"$diffTool" "$baseDir/1" "$baseDir/2" -p delta.patch      # Build
+	"$patchTool" "$baseDir/1" -p delta.patch "$baseDir/2_"    # Apply
+
+	# Test
+	cd "$baseDir"
+	testSimple_Test
+
+	# Clear
+	rm -rf "$baseDir"
+}
+
+testLabel "Sub directory"
+testSubdir_noLabel
+
+# --------------------------------------------------------------------------------
+# Test using an absolute path
+
+# Switch base dir to an absolute path
+initialBaseDir="$baseDir"
+baseDir="$(pwd)/$baseDir"
+
+testLabel "Absolute directory"
+testSubdir_noLabel
+
+# Restore baseDir
+baseDir="$initialBaseDir"
 
 echo ""
 echo $separatorDisplay
