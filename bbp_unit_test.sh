@@ -137,6 +137,7 @@ testSubdir_noLabel() {
 	testSimple_Test
 
 	# Clear
+	cd - > /dev/null
 	rm -rf "$baseDir"
 }
 
