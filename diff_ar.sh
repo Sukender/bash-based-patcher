@@ -20,5 +20,7 @@ else
 	res="$?"
 fi
 
-if [[ "$res" == "0" ]]; then echo "Created '$archive'."; fi
+if (( $verbosity >= 1 )); then
+	if [[ "$res" == "0" ]]; then echo "Created '$archive'."; fi
+fi
 exit "$res"

@@ -10,6 +10,7 @@ toolNameUnversionned="Sukender's bash-based patcher"
 toolName="$toolNameUnversionned v$toolVersion"
 separatorDisplay="--------------------------------------------------------------------------------"
 defaultpatchfile="patch.7z"
+if [ -z "$defaultVerbosity" ]; then defaultVerbosity=1; fi
 
 BBD_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
 
@@ -186,5 +187,5 @@ readBaseSync() {
 
 # --------------------------------------------------------------------------------
 # Default-initialized variables
-verbose=0
+verbosity="$defaultVerbosity"
 patchfile="$defaultpatchfile"

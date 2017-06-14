@@ -47,7 +47,10 @@ usage() {
 	echo "      rdiff *MAY* have better compression on data files, but be slightly"
 	echo "      slower (especially upon decompression)"
 	echo "  -v, --verbose"
-	echo "      Adds more information."
+	echo "      Adds a level of verbosity (more information). Default level = $defaultVerbosity."
+	echo "  -q, --quiet"
+	echo "      Removes a level of verbosity (more information). Default level = $defaultVerbosity."
+	echo "      Please note that even level 0 is not absolutely quiet."
 	echo "  --"
 	echo "      Do not interpret any more arguments as options."
 	echo
@@ -57,7 +60,10 @@ usage() {
 while [ "$#" -gt 0 ]; do
 case "$1" in
 	-v|--verbose)
-		shift; verbose=1;
+		shift; verbosity=$(( verbosity + 1 ));
+		;;
+	-q|--quiet)
+		shift; verbosity=$(( verbosity - 1 ));
 		;;
 	-h|--help)
 		shift; usage; exit 0;
@@ -98,7 +104,7 @@ fi
 
 chooseDelta "$deltaChoice"
 
-if [[ $verbose != 0 ]]; then
+if (( $verbosity >= 2 )); then
 	echo "$toolName"
 	echo $separatorDisplay
 	echo ""
@@ -109,10 +115,12 @@ fi
 
 # --------------------------------------------------------------------------------
 
-echo $separatorDisplay
-echo "[$(date +%H:%M:%S)] Creating patch. This may take a while."
-echo "    Please note this is a multiple phases creation: the output compressor may stall (especially at 0%) for a long time."
-echo ""
+if (( $verbosity >= 1 )); then
+	echo $separatorDisplay
+	echo "[$(date +%H:%M:%S)] Creating patch. This may take a while."
+	echo "    Please note this is a multiple phases creation: the output compressor may stall (especially at 0%) for a long time."
+	echo ""
+fi
 
 rm pipe1 pipe2 "$patchfile" 2> /dev/null
 mkfifo pipe1 pipe2 || exit 2
@@ -140,9 +148,11 @@ fi
 
 rm pipe1 pipe2
 
-echo $separatorDisplay
-echo "[$(date +%H:%M:%S)] Patch created. Size = $(du -sb "$patchfile" | awk '{ print $1 }') ($(du -sh "$patchfile" | awk '{ print $1 }'))"
-echo ""
+if (( $verbosity >= 1 )); then
+	echo $separatorDisplay
+	echo "[$(date +%H:%M:%S)] Patch created. Size = $(du -sb "$patchfile" | awk '{ print $1 }') ($(du -sh "$patchfile" | awk '{ print $1 }'))"
+	echo ""
+fi
 
 # --------------------------------------------------------------------------------
 

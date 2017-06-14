@@ -13,6 +13,7 @@
 #initDir="$PWD"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
 source "$DIR/diff_patch_config.sh" || exit 4
+export defaultVerbosity=0		# Globally change verbosity
 
 baseDir="_diff_unit_test"
 
@@ -24,6 +25,12 @@ err_report() {
 	exit 1
 }
 trap 'err_report $LINENO' ERR
+
+testLabel() {
+	#if (( $verbosity >= 1 )); then
+	echo ""
+	echo "*** Entering test: $1 ***"
+}
 
 # --------------------------------------------------------------------------------
 # Test 1 - Simple patch creation/application
@@ -60,6 +67,8 @@ testSimple_Test() {
 
 # testSimple deltaTool
 testSimple() {
+	testLabel "Simple $1"
+
 	# Setup
 	testSimple_Setup
 
@@ -84,6 +93,8 @@ testSimple "xdelta3"
 
 # testFromArchive deltaTool diffSourceName patchSourceName
 testFromArchive() {
+	testLabel "archive $1 '$2' '$3'"
+
 	# Setup
 	testSimple_Setup   # As the previous test
 	"$arTool" "1"      # Create archive

@@ -51,7 +51,10 @@ usage() {
 	echo "      Chooses the delta-compression tool NAME. Possibles choices are rdiff, xdelta3."
 	echo "      You *MUST* select the one used for compression. There is no auto-detection."
 	echo "  -v, --verbose"
-	echo "      Adds more information."
+	echo "      Adds a level of verbosity (more information). Default level = $defaultVerbosity."
+	echo "  -q, --quiet"
+	echo "      Removes a level of verbosity (more information). Default level = $defaultVerbosity."
+	echo "      Please note that even level 0 is not absolutely quiet."
 	echo "  --"
 	echo "      Do not interpret any more arguments as options."
 	echo
@@ -61,7 +64,10 @@ usage() {
 while [ "$#" -gt 0 ]; do
 case "$1" in
 	-v|--verbose)
-		shift; verbose=1;
+		shift; verbosity=$(( verbosity + 1 ));
+		;;
+	-q|--quiet)
+		shift; verbosity=$(( verbosity - 1 ));
 		;;
 	-h|--help)
 		shift; usage; exit 0;
@@ -104,7 +110,7 @@ fi
 
 chooseDelta "$deltaChoice"
 
-if [[ $verbose != 0 ]]; then
+if (( $verbosity >= 2 )); then
 	echo "$toolName"
 	echo $separatorDisplay
 	echo ""
@@ -117,9 +123,11 @@ fi
 # --------------------------------------------------------------------------------
 
 if [ -n "$patchUrl" ]; then
-	echo $separatorDisplay
-	echo "[$(date +%H:%M:%S)] Getting the patch file."
-	echo ""
+	if (( $verbosity >= 1 )); then
+		echo $separatorDisplay
+		echo "[$(date +%H:%M:%S)] Getting the patch file."
+		echo ""
+	fi
 	wget "$patchUrl" -O "$patchfile" || exit 3
 fi
 
@@ -134,18 +142,22 @@ mkfifo pipe1 pipe2 pipe2ar || exit 2
 # Unfortunately, rdiff needs the base (here 'pipe1') to be seekable. But named pipes aren't (even if seekable pipes may have been proposed).
 # We thus rely on an intermediate file.
 if [ "$delta" != "xdelta3" ]; then
-	echo $separatorDisplay
-	echo "[$(date +%H:%M:%S)] Creating intermediate file before applying patch. This may take a while."
-	echo ""
+	if (( $verbosity >= 1 )); then
+		echo $separatorDisplay
+		echo "[$(date +%H:%M:%S)] Creating intermediate file before applying patch. This may take a while."
+		echo ""
+	fi
 	rm "$intermediate1" 2> /dev/null
 	readBaseSync "$dir1" "$intermediate1"		# Handles dir1 as an archive or dir - Sync reading
 	#tar -cf "$intermediate1" --sort=name --no-auto-compress --directory="$dir1" . || exit 2
 	#$tarDir -f "$intermediate1" pipe1 || exit 2
 fi
 
-echo $separatorDisplay
-echo "[$(date +%H:%M:%S)] Applying patch. This may take a while."
-echo ""
+if (( $verbosity >= 1 )); then
+	echo $separatorDisplay
+	echo "[$(date +%H:%M:%S)] Applying patch. This may take a while."
+	echo ""
+fi
 
 if [ "$delta" == "xdelta3" ]; then
 	# xdelta3
@@ -159,6 +171,8 @@ else
 fi
 rm pipe1 pipe2 pipe2ar
 
-echo $separatorDisplay
-echo "[$(date +%H:%M:%S)] Patch applied."
-echo ""
+if (( $verbosity >= 1 )); then
+	echo $separatorDisplay
+	echo "[$(date +%H:%M:%S)] Patch applied."
+	echo ""
+fi
