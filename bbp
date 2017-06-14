@@ -1,0 +1,41 @@
+#!/bin/bash
+# Sukender's Bash-Based Patcher (BBP)
+# This script is a wrapper around bbp* (bbpdiff, bbppatch, bbpar)
+# Dependencies, error codes, documentation: see "bbp_config.sh"
+#
+# Author: Sukender (Benoit Neil)
+# Licence: WTFPL v2 (see COPYING.txt)
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
+source "$DIR/bbp_config.sh" || exit 4
+
+if [ "$1" == "diff" ]; then
+	shift
+	"$diffTool" $*
+	exit $?
+fi
+if [ "$1" == "patch" ]; then
+	shift
+	"$patchTool" $*
+	exit $?
+fi
+if [ "$1" == "ar" ]; then
+	shift
+	"$arTool" $*
+	exit $?
+fi
+
+
+echo ""
+echo "$toolName"
+echo "Tools to patch directories."
+echo "Please select you tool!"
+echo ""
+echo "Syntax:"
+echo "  bbp tool [tools_arguments]"
+echo "  Where tool is one of: diff, patch, ar"
+echo ""
+echo "For more information type:"
+echo "   bbp tool --help"
+echo "   Example: bbp diff --help"
+echo ""
