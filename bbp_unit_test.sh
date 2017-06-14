@@ -85,8 +85,8 @@ testSimple() {
 }
 
 # Test may fallback to another delta tool. This is intended.
-# testSimple "rdiff"
-# testSimple "xdelta3"
+testSimple "rdiff"
+testSimple "xdelta3"
 
 # --------------------------------------------------------------------------------
 # Test 2 - As test 1 but base directory may now be an archive
@@ -112,13 +112,13 @@ testFromArchive() {
 	rm -rf "$baseDir"
 }
 
-# testFromArchive "xdelta3" "1$archiveSuffix" "1$archiveSuffix"    # Build from archive, apply from archive
-# testFromArchive "xdelta3" "1" "1$archiveSuffix"                  # Build from directory, apply from archive
-# testFromArchive "xdelta3" "1$archiveSuffix" "1"                  # Build from archive, apply from directory
+testFromArchive "xdelta3" "1$archiveSuffix" "1$archiveSuffix"    # Build from archive, apply from archive
+testFromArchive "xdelta3" "1" "1$archiveSuffix"                  # Build from directory, apply from archive
+testFromArchive "xdelta3" "1$archiveSuffix" "1"                  # Build from archive, apply from directory
 
-# testFromArchive "rdiff"   "1$archiveSuffix" "1$archiveSuffix"    # Build from archive, apply from archive
-# testFromArchive "rdiff"   "1" "1$archiveSuffix"                  # Build from directory, apply from archive
-# testFromArchive "rdiff"   "1$archiveSuffix" "1"                  # Build from archive, apply from directory
+testFromArchive "rdiff"   "1$archiveSuffix" "1$archiveSuffix"    # Build from archive, apply from archive
+testFromArchive "rdiff"   "1" "1$archiveSuffix"                  # Build from directory, apply from archive
+testFromArchive "rdiff"   "1$archiveSuffix" "1"                  # Build from archive, apply from directory
 
 # --------------------------------------------------------------------------------
 # Test from a directory that is not the parent of dir1 and dir2
