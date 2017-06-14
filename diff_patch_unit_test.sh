@@ -20,7 +20,7 @@ baseDir="_diff_unit_test"
 err_report() {
 	echo "Error on line $1"
 	cd "$DIR"
-	rm -r "$baseDir"
+	rm -r "$baseDir" 2> /dev/null
 	exit 1
 }
 trap 'err_report $LINENO' ERR
@@ -28,8 +28,7 @@ trap 'err_report $LINENO' ERR
 # --------------------------------------------------------------------------------
 # Test 1 - Simple patch creation/application
 
-# test1 deltaTool
-test1() {
+testSimple_Setup() {
 	# Clear
 	rm -rf "$baseDir"
 
@@ -46,12 +45,9 @@ test1() {
 	echo "aaaaaa v2!" > "2/a.txt"
 	cp "1/c.txt" "2/c.txt"
 	echo "ddd-dddddddd-ddddd" > "2/d.txt"		# Will be added
+}
 
-	# Operate
-	"$DIR/diff.sh" -D "$1" "1" "2" -p delta.patch		# Build
-	"$DIR//patch.sh" -D "$1" "1" -p delta.patch "2_"	# Apply
-
-	# Test
+testSimple_Test() {
 	if [ ! -f "2_/a.txt" ]; then err_report $LINENO; fi
 	if [   -f "2_/b.txt" ]; then err_report $LINENO; fi
 	if [ ! -f "2_/c.txt" ]; then err_report $LINENO; fi
@@ -60,14 +56,60 @@ test1() {
 	read line < "2_/a.txt"; if [ "$line" != "aaaaaa v2!"         ]; then err_report $LINENO; fi
 	read line < "2_/c.txt"; if [ "$line" != "ccccc"              ]; then err_report $LINENO; fi
 	read line < "2_/d.txt"; if [ "$line" != "ddd-dddddddd-ddddd" ]; then err_report $LINENO; fi
+}
+
+# testSimple deltaTool
+testSimple() {
+	# Setup
+	testSimple_Setup
+
+	# Operate
+	"$diffTool" -D "$1" "1" "2" -p delta.patch       # Build
+	"$patchTool" -D "$1" "1" -p delta.patch "2_"    # Apply
+
+	# Test
+	testSimple_Test
 
 	# Clear
 	cd -
 	rm -rf "$baseDir"
 }
 
-test1 "rdiff"
-test1 "xdelta3"
+# Test may fallback to another delta tool. This is intended.
+testSimple "rdiff"
+testSimple "xdelta3"
+
+# --------------------------------------------------------------------------------
+# Test 2 - As test 1 but base directory may now be an archive
+
+# testFromArchive deltaTool diffSourceName patchSourceName
+testFromArchive() {
+	# Setup
+	testSimple_Setup   # As the previous test
+	"$arTool" "1"      # Create archive
+	#rm -r "1"         # Remove original "1"
+
+	# Operate
+	"$diffTool" -D "$1" "$2" "2" -p delta.patch       # Build
+	"$patchTool" -D "$1" "$3" -p delta.patch "2_"     # Apply
+
+	# Test
+	testSimple_Test    # As the previous test
+
+	# Clear
+	cd -
+	rm -rf "$baseDir"
+}
+
+testFromArchive "xdelta3" "1$archiveSuffix" "1$archiveSuffix"    # Build from archive, apply from archive
+testFromArchive "xdelta3" "1" "1$archiveSuffix"                  # Build from directory, apply from archive
+testFromArchive "xdelta3" "1$archiveSuffix" "1"                  # Build from archive, apply from directory
+
+testFromArchive "rdiff"   "1$archiveSuffix" "1$archiveSuffix"    # Build from archive, apply from archive
+testFromArchive "rdiff"   "1" "1$archiveSuffix"                  # Build from directory, apply from archive
+testFromArchive "rdiff"   "1$archiveSuffix" "1"                  # Build from archive, apply from directory
+
+# --------------------------------------------------------------------------------
 
 echo ""
 echo $separatorDisplay

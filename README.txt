@@ -23,6 +23,7 @@ What is was not meant for:
 
 To-do:
   - Get rid of 7za, in favor of "tar J", to avoid one dependency.
+  - Make it work from any working dir, not just the parent directory of base dir (= dir1).
   - Handle upload & downloads of patches (FTP or such).
   - Add a resilience towards "small changes" in base directories (maintainer and users).
     - "Small changes" has to be clearly defined.

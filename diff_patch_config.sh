@@ -144,6 +144,47 @@ assertHas xz "xz-utils"
 evalHas pv
 
 # --------------------------------------------------------------------------------
+# Common functions & calls
+
+tarDir="tar -c --sort=name --no-auto-compress"
+
+# readBase dir1 outFile useSubshell
+readBase_sub() {
+	if [ -f "$1" ]; then
+		# Archive (file) mode
+		#TODO: Ensure this is an adequate archive!
+		if [[ "$useSubshell" != 0 ]]; then
+			xz -kd "$1" --stdout > "$2" &
+		else
+			xz -kd "$1" --stdout > "$2"
+		fi
+	else
+		# Directory mode
+		if [ ! -d "$1" ]; then
+			echo "\"$1\" ('newDirectory') is not a valid directory!"
+			exit 1
+		fi
+		if [[ "$useSubshell" != 0 ]]; then
+			$tarDir --directory="$1" . > "$2" &
+		else
+			$tarDir --directory="$1" . > "$2"
+		fi
+	fi
+}
+
+# Opens or reads base (directory or archive) to an output file (generally "pipe1"), into a subshell.
+# readBase dir1 outFile
+readBase() {
+	readBase_sub "$1" "$2" "1"
+}
+
+# Opens or reads base (directory or archive) to an output file (generally "pipe1"), into the current shell.
+# readBase dir1 outFile
+readBaseSync() {
+	readBase_sub "$1" "$2" "0"
+}
+
+# --------------------------------------------------------------------------------
 # Default-initialized variables
 verbose=0
 patchfile="$defaultpatchfile"

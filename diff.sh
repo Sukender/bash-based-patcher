@@ -91,6 +91,11 @@ if [ -z "$dir1" ] || [ -z "$dir2" ]; then
 	exit 1;
 fi
 
+if [ ! -d "$dir2" ]; then
+	echo "\"$dir2\" ('newDirectory') is not a directory!"
+	exit 1
+fi
+
 chooseDelta "$deltaChoice"
 
 if [[ $verbose != 0 ]]; then
@@ -109,25 +114,31 @@ echo "[$(date +%H:%M:%S)] Creating patch. This may take a while."
 echo "    Please note this is a multiple phases creation: the output compressor may stall (especially at 0%) for a long time."
 echo ""
 
+rm pipe1 pipe2 "$patchfile" 2> /dev/null
+mkfifo pipe1 pipe2 || exit 2
+
+readBase "$dir1" pipe1		# Handles dir1 as an archive or dir
+
 if [ "$delta" == "xdelta3" ]; then
 	# xdelta3
-	rm pipe1 pipe2 "$patchfile" 2> /dev/null
-	mkfifo pipe1 pipe2 || exit 2
 
-	# TODO try the xdelta invocation: XDELTA="-s source" tar --use-compress-program=xdelta3 -cf target.vcdiff target
-
-	#tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & tar -c --sort=name --no-auto-compress --directory="$dir2" . > pipe2 & xdelta3 -e -9 -S "none" -s pipe1 pipe2 | 7za a -mx9 -si "$patchfile" || exit 2
-	tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & tar -c --sort=name --no-auto-compress --directory="$dir2" . > pipe2 & xdelta3 -e -9 -s pipe1 pipe2 | 7za a -mx9 -si "$patchfile" || exit 2
-	#tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & tar -c --sort=name --no-auto-compress --directory="$dir2" . > pipe2 & xdelta3 -e -9 -S lzma -s pipe1 pipe2 "$patchfile" || exit 2
-	rm pipe1 pipe2
+	# TODO try the xdelta invocation? : XDELTA="-s source" tar --use-compress-program=xdelta3 -cf target.vcdiff target
+	#$tarDir --directory="$dir1" . > pipe1 & $tarDir --directory="$dir2" . > pipe2 & xdelta3 -e -9 -S "none" -s pipe1 pipe2 | 7za a -mx9 -si "$patchfile" || exit 2
+	#$tarDir --directory="$dir1" . > pipe1 &
+	$tarDir --directory="$dir2" . > pipe2 & xdelta3 -e -9 -s pipe1 pipe2 | 7za a -mx9 -si "$patchfile" || exit 2
+	#$tarDir --directory="$dir1" . > pipe1 & $tarDir --directory="$dir2" . > pipe2 & xdelta3 -e -9 -S lzma -s pipe1 pipe2 "$patchfile" || exit 2
 else
 	# rdiff
-	rm pipe1 pipe2 pipe1sig "$patchfile" 2> /dev/null
-	mkfifo pipe1 pipe1sig pipe2 || exit 2
-	tar -c --sort=name --no-auto-compress --directory="$dir1" . > pipe1 & rdiff signature pipe1 pipe1sig & tar -c --sort=name --no-auto-compress --directory="$dir2" . > pipe2 & rdiff delta pipe1sig pipe2 | 7za a -mx9 -si "$patchfile" || exit 2
+
+	rm pipe1sig 2> /dev/null
+	mkfifo pipe1sig || exit 2
+	#$tarDir --directory="$dir1" . > pipe1 &
+	rdiff signature pipe1 pipe1sig & $tarDir --directory="$dir2" . > pipe2 & rdiff delta pipe1sig pipe2 | 7za a -mx9 -si "$patchfile" || exit 2
 		# > /dev/null
-	rm pipe1 pipe1sig pipe2
+	rm pipe1sig
 fi
+
+rm pipe1 pipe2
 
 echo $separatorDisplay
 echo "[$(date +%H:%M:%S)] Patch created. Size = $(du -sb "$patchfile" | awk '{ print $1 }') ($(du -sh "$patchfile" | awk '{ print $1 }'))"
