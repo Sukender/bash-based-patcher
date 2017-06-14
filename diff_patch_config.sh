@@ -19,7 +19,7 @@ patchTool="$BBD_HOME/patch.sh"
 arTool="$BBD_HOME/diff_ar.sh"
 
 # Other
-archiveSuffix=".reference.tar.xz"		# "-a" option of tar is used to select the compressor by file extension. We thus choose the compression here.
+archiveSuffix=".reference.tar.xz"		# "-J" option of tar is used to select the XZ compressor. Do not change extension without changing tar arguments.
 
 # --------------------------------------------------------------------------------
 # Documentation

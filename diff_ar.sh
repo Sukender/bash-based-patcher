@@ -9,11 +9,11 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
 source "$DIR/diff_patch_config.sh" || exit 4
 
-# "-a" option of tar is used here to select the compressor by file extension. We thus choose the compression in 'archiveSuffix'.
 archive="$(basename "$1")$archiveSuffix"
 
+rm "archive" > /dev/null
 if [[ "$has_pv" != "0" ]]; then
-	XZ_OPT=-9 tar -acf - --directory="$1" . | pv > "$archive"
+	XZ_OPT=-9 tar -Jcf - --directory="$1" . | pv > "$archive"
 	res=${PIPESTATUS[0]}
 else
 	XZ_OPT=-9 tar -acf "$archive" --directory="$1" . --checkpoint=.10
