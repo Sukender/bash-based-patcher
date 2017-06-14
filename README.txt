@@ -22,11 +22,14 @@ What is was not meant for:
   - The toolset is not designed to get cool/beautiful installers. This is only an ugly command line maintaining two directories.
 
 To-do:
+  - Get rid of 7za, in favor of "tar J", to avoid one dependency.
   - Handle upload & downloads of patches (FTP or such).
   - Add a resilience towards "small changes" in base directories (maintainer and users).
     - "Small changes" has to be clearly defined.
 	- The goal is to allow both sides (maintainer & users) to tweak some files (say, config files), and still make the patch work properly.
 	- Allowed changes may be somewhat hard-coded. Ex : a list of files that must be completely included in the patch when changed, even if a portion of them would suffice to describe differences.
+  - (Maybe) Add support for custom archives (anything, not just ".tar.something") as base directory (both for diff and patch).
+    - This may imply issues in creating proper diffs.
   - (Maybe) Handling the initial release (such as a patch of "nothing" to "something"), especially if upload/download is handled.
   - (Maybe) Add an option for in-place patching.
 
