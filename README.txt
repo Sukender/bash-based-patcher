@@ -1,5 +1,5 @@
-Sukender's bash-based patcher
------------------------------
+BBP: Sukender's bash-based patcher
+----------------------------------
 
 This toolset is a very basic and simple diff/patch.
 
@@ -24,6 +24,7 @@ What is was not meant for:
 To-do:
   - Make it work from any working dir, not just the parent directory of base dir (= dir1).
   - Handle upload & downloads of patches (FTP or such).
+  - "make install" should have a way to configure install path.
   - Add a resilience towards "small changes" in base directories (maintainer and users).
     - "Small changes" has to be clearly defined.
 	- The goal is to allow both sides (maintainer & users) to tweak some files (say, config files), and still make the patch work properly.

@@ -6,9 +6,9 @@
 # Licence: WTFPL v2 (see COPYING.txt)
 # To-do: make this script accept arguments, have an help & usage, etc.
 
-# Dependencies, error codes, documentation: see "diff_patch_config.sh"
+# Dependencies, error codes, documentation: see "bbp_config.sh"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
-source "$DIR/diff_patch_config.sh" || exit 4
+source "$DIR/bbp_config.sh" || exit 4
 
 archive="$(basename "$1")$archiveSuffix"
 

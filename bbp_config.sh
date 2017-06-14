@@ -5,8 +5,8 @@
 
 # --------------------------------------------------------------------------------
 # Constants
-toolVersion="0.3"
-toolNameUnversionned="Sukender's bash-based patcher"
+toolVersion="0.4"
+toolNameUnversionned="Sukender's Bash-Based Patcher (BBP)"
 toolName="$toolNameUnversionned v$toolVersion"
 separatorDisplay="--------------------------------------------------------------------------------"
 defaultpatchfile="patch.xz"
@@ -15,9 +15,9 @@ if [ -z "$defaultVerbosity" ]; then defaultVerbosity=1; fi
 BBD_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
 
 # Tools names
-diffTool="$BBD_HOME/diff.sh"
-patchTool="$BBD_HOME/patch.sh"
-arTool="$BBD_HOME/diff_ar.sh"
+diffTool="$BBD_HOME/bbpdiff"
+patchTool="$BBD_HOME/bbppatch"
+arTool="$BBD_HOME/bbpar"
 
 # Other
 archiveSuffix=".reference.tar.xz"		# "-J" option of tar is used to select the XZ compressor. Do not change extension without changing tar arguments.

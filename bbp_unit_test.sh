@@ -9,10 +9,10 @@
 #  - Test patch upload / retreival
 #  - Test various options (especially -p)
 
-# Dependencies, error codes, documentation: see "diff_patch_config.sh"
+# Dependencies, error codes, documentation: see "bbp_config.sh"
 #initDir="$PWD"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
-source "$DIR/diff_patch_config.sh" || exit 4
+source "$DIR/bbp_config.sh" || exit 4
 export defaultVerbosity=0		# Globally change verbosity
 
 baseDir="_diff_unit_test"

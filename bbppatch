@@ -4,9 +4,9 @@
 # Licence: WTFPL v2 (see COPYING.txt)
 # Version: 0.4
 
-# Dependencies, error codes, documentation: see "diff_patch_config.sh"
+# Dependencies, error codes, documentation: see "bbp_config.sh"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
-source "$DIR/diff_patch_config.sh" || exit 4
+source "$DIR/bbp_config.sh" || exit 4
 
 intermediate1="1.tar"
 
