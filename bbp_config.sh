@@ -31,7 +31,8 @@ doc_dependencies="Dependencies:
   - rdiff or xdelta3 to make the binary diff.
   - named pipes to avoid storing intermediate files to disk (much faster: everything in memory).
   - XZ (xz-utils) for tar to compress the output and make patches space-efficient.
-  - (optional) pv to display progress.
+  - (optional) pv, to display progress.
+  - (optional) make, to install, test, and package.
   - [patch only] wget to retreive a distant patch.
 All-in-one apt-style command line:
   sudo apt install tar rdiff xdelta3 xz-utils wget pv
