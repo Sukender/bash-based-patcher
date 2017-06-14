@@ -2,7 +2,7 @@
 # Creates a compressed binary diff (patch) between two directories.
 # Author: Sukender (Benoit Neil)
 # Licence: WTFPL v2 (see COPYING.txt)
-# Version: 0.3
+# Version: 0.4
 
 # Dependencies, error codes, documentation: see "diff_patch_config.sh"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
