@@ -11,6 +11,16 @@ toolName="$toolNameUnversionned v$toolVersion"
 separatorDisplay="--------------------------------------------------------------------------------"
 defaultpatchfile="patch.7z"
 
+BBD_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
+
+# Tools names
+diffTool="$BBD_HOME/diff.sh"
+patchTool="$BBD_HOME/patch.sh"
+arTool="$BBD_HOME/diff_ar.sh"
+
+# Other
+archiveSuffix=".reference.tar.xz"		# "-a" option of tar is used to select the compressor by file extension. We thus choose the compression here.
+
 # --------------------------------------------------------------------------------
 # Documentation
 
@@ -18,10 +28,11 @@ doc_dependencies="Dependencies:
   - tar to make the directory a single stream (file).
   - rdiff or xdelta3 to make the binary diff.
   - named pipes to avoid storing intermediate files to disk (much faster: everything in memory).
-  - 7-zip (7za) to LZMA compress the output and make an efficient patch.
+  - 7-zip (7za) and LZMA for tar (xz-utils) to compress the output and make patches space-efficient.
+  - (optional) pv to display progress.
   - [patch only] wget to retreive a distant patch.
 All-in-one apt-style command line:
-  sudo apt install tar rdiff xdelta3 p7zip wget
+  sudo apt install tar rdiff xdelta3 p7zip xz-utils wget pv
 "
 
 doc_errorCodes="Error codes:
@@ -30,6 +41,7 @@ doc_errorCodes="Error codes:
   2: Error in process
   3: [patch only] Error downloading patch
   4: Error in configuration (internal error, installation error)
+  5: Missing dependency
 "
 
 doc_license="License:
@@ -77,6 +89,15 @@ evalHas() {
 	fi
 }
 
+# assertHas command packageNameInfo
+assertHas() {
+	which "$1" > /dev/null 2> /dev/null
+	if [[ "$?" != 0 ]]; then
+		echo "Missing: '$1' seems not installed and in your path. Please install (the package you need is probably '$2')."
+		exit 5
+	fi
+}
+
 evalHas xdelta3
 evalHas rdiff
 
@@ -108,6 +129,19 @@ chooseDelta() {
 	echo "Error: your need either rdiff or xdelta3 installed and in your path. Please install."
 	exit 1
 }
+
+# --------------------------------------------------------------------------------
+# Mandatory tools availability
+
+assertHas tar tar
+assertHas "7za" "p7zip"
+assertHas wget wget
+assertHas xz "xz-utils"
+
+# --------------------------------------------------------------------------------
+# Optional tools availability
+
+evalHas pv
 
 # --------------------------------------------------------------------------------
 # Default-initialized variables
