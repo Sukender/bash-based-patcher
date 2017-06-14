@@ -25,6 +25,7 @@ usage() {
 	echo ""
 	echo "$toolName"
 	echo "Creates an archive useable by diff/patch as a base directory."
+	echo "Output is located in the working directory, with a standardized name."
 	echo
 	echo "Syntax:"
 	echo "  ar [options] directory"
