@@ -11,17 +11,17 @@ source "$DIR/bbp_config.sh" || exit 4
 
 if [ "$1" == "diff" ]; then
 	shift
-	"$diffTool" $*
+	"$diffTool" "$@"
 	exit $?
 fi
 if [ "$1" == "patch" ]; then
 	shift
-	"$patchTool" $*
+	"$patchTool" "$@"
 	exit $?
 fi
 if [ "$1" == "ar" ]; then
 	shift
-	"$arTool" $*
+	"$arTool" "$@"
 	exit $?
 fi
 if [ "$1" == "--version" ]; then
