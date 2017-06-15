@@ -22,6 +22,8 @@ What is was not meant for:
   - The toolset is not designed to get cool/beautiful installers. This is only an ugly command line maintaining two directories.
 
 To-do:
+  - Name patches explicitely, such as "Patch 'MyOldDir' to 'MyNewDir'.xz". Handle auto-detection of which patch to choose (if multiple ones) when applying. Rename "patched" directory accordingly.
+  - Delete or renamed patched directory upon failure.
   - Test all pipe statuses (${PIPESTATUS[i]}) and async statuses everywhere, and stop on error.
   - Handle upload & downloads of patches (FTP or such).
   - "make install" should have a way to configure install path.
