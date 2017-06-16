@@ -1,5 +1,5 @@
 #!/bin/bash
-# Applies a compressed binary diff (patch) on a directory, creating a copy (ie. not in-place).
+# Applies a compressed binary diff (patch) on a directory or specific archiv, creating a copy (ie. not in-place).
 # Author: Sukender (Benoit Neil)
 # Licence: WTFPL v2 (see COPYING.txt)
 
@@ -28,11 +28,12 @@ positionalOption() {
 usage() {
 	echo ""
 	echo "$toolName"
-	echo "Applies a compressed binary diff (patch) on a directory, creating a copy (ie. not in-place)."
+	echo "Applies a compressed binary diff (patch) on a directory or archive, creating a copy (ie. not in-place)."
+	echo "Archive (replacing 'old' directory) is not whatever a compressor can do: it must be tar-based, preferably generated from '$arToolName'."
 	echo
 	echo "Syntax:"
-	echo "  patch [options] oldDirectory [newDirectory]"
-	echo "  If newDirectory is omitted, it is automatically generated."
+	echo "  patch [options] old [new]"
+	echo "  If 'new' is omitted, it is automatically generated."
 	echo
 	echo "Options:"
 	echo

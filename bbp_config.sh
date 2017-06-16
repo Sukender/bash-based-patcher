@@ -5,7 +5,7 @@
 
 # --------------------------------------------------------------------------------
 # Constants
-toolVersion="0.4.2"
+toolVersion="0.4.3"
 toolNameUnversionned="Sukender's Bash-Based Patcher (BBP)"
 toolName="$toolNameUnversionned v$toolVersion"
 separatorDisplay="--------------------------------------------------------------------------------"
@@ -15,12 +15,16 @@ if [ -z "$defaultVerbosity" ]; then defaultVerbosity=1; fi
 BBD_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
 
 # Tools names
-diffTool="$BBD_HOME/bbpdiff"
-patchTool="$BBD_HOME/bbppatch"
-arTool="$BBD_HOME/bbpar"
+diffToolName="bbpdiff"
+diffTool="$BBD_HOME/$diffToolName"
+patchToolName="bbppatch"
+patchTool="$BBD_HOME/$patchToolName"
+arToolName="bbpar"
+arTool="$BBD_HOME/$arToolName"
 
 # Other
-archiveSuffix=".reference.tar.xz"		# "-J" option of tar is used to select the XZ compressor. Do not change extension without changing tar arguments.
+archiveExtension=".tar.xz"		# "-J" option of tar is used to select the XZ compressor. Do not change extension without changing tar arguments.
+archiveSuffix=".reference$archiveExtension"
 XZ_OPT=-9	# Global compression ratio for .tar.xz
 
 # --------------------------------------------------------------------------------
@@ -154,7 +158,10 @@ tarDir="tar -c --sort=name --no-auto-compress"
 readBase_sub() {
 	if [ -f "$1" ]; then
 		# Archive (file) mode
-		#TODO: Ensure this is an adequate archive!
+		if [[ "$1" != *$archiveExtension ]]; then
+			echo "\"$1\" ('new') is a file, but it is not a valid archive (named '*$archiveExtension')!"
+			exit 1
+		fi
 		if [[ "$useSubshell" != 0 ]]; then
 			xz -kd "$1" --stdout > "$2" &
 		else
@@ -163,7 +170,7 @@ readBase_sub() {
 	else
 		# Directory mode
 		if [ ! -d "$1" ]; then
-			echo "\"$1\" ('newDirectory') is not a valid directory!"
+			echo "\"$1\" ('new') is not a valid directory, nor a valid archive!"
 			exit 1
 		fi
 		if [[ "$useSubshell" != 0 ]]; then
@@ -180,7 +187,7 @@ readBase() {
 	readBase_sub "$1" "$2" "1"
 }
 
-# Opens or reads base (directory or archive) to an output file (generally "pipe1"), into the current shell.
+# Opens or reads base (directory or archive) to an output file, into the current shell.
 # readBase dir1 outFile
 readBaseSync() {
 	readBase_sub "$1" "$2" "0"

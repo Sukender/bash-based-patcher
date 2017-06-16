@@ -93,16 +93,19 @@ testSimple "xdelta3"
 
 # testFromArchive deltaTool diffSourceName patchSourceName
 testFromArchive() {
-	testLabel "Archive $1 '$2' '$3'"
+	testLabel "Archive $1 / '$2' '$3' / '$4'"
 
 	# Setup
 	testSimple_Setup   # As the previous test
 	"$arTool" "1"      # Create archive
+	if [[ "$3" == *$archiveExtension ]]; then
+		"$arTool" "2"      # Create archive if 'new' is an archive
+	fi
 	#rm -r "1"         # Remove original "1"
 
 	# Operate
-	"$diffTool" -D "$1" "$2" "2" -p delta.patch       # Build
-	"$patchTool" -D "$1" "$3" -p delta.patch "2_"     # Apply
+	"$diffTool" -D "$1" "$2" "$3" -p delta.patch       # Build
+	"$patchTool" -D "$1" "$4" -p delta.patch "2_"     # Apply
 
 	# Test
 	testSimple_Test    # As the previous test
@@ -112,13 +115,16 @@ testFromArchive() {
 	rm -rf "$baseDir"
 }
 
-testFromArchive "xdelta3" "1$archiveSuffix" "1$archiveSuffix"    # Build from archive, apply from archive
-testFromArchive "xdelta3" "1" "1$archiveSuffix"                  # Build from directory, apply from archive
-testFromArchive "xdelta3" "1$archiveSuffix" "1"                  # Build from archive, apply from directory
+testFromArchive "xdelta3" "1$archiveSuffix" "2" "1$archiveSuffix"    # Build from archive/directory, apply from archive
+testFromArchive "xdelta3" "1" "2" "1$archiveSuffix"                  # Build from directory/directory, apply from archive
+testFromArchive "xdelta3" "1$archiveSuffix" "2" "1"                  # Build from archive/directory, apply from directory
 
-testFromArchive "rdiff"   "1$archiveSuffix" "1$archiveSuffix"    # Build from archive, apply from archive
-testFromArchive "rdiff"   "1" "1$archiveSuffix"                  # Build from directory, apply from archive
-testFromArchive "rdiff"   "1$archiveSuffix" "1"                  # Build from archive, apply from directory
+testFromArchive "rdiff"   "1$archiveSuffix" "2" "1$archiveSuffix"    # Build from archive/directory, apply from archive
+testFromArchive "rdiff"   "1" "2" "1$archiveSuffix"                  # Build from directory/directory, apply from archive
+testFromArchive "rdiff"   "1$archiveSuffix" "2" "1"                  # Build from archive/directory, apply from directory
+
+testFromArchive "xdelta3" "1$archiveSuffix" "2$archiveSuffix" "1$archiveSuffix"    # Build from archive/archive, apply from archive
+testFromArchive "rdiff"   "1$archiveSuffix" "2$archiveSuffix" "1$archiveSuffix"    # Build from archive/archive, apply from archive
 
 # --------------------------------------------------------------------------------
 # Test from a directory that is not the parent of dir1 and dir2

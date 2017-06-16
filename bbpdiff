@@ -1,5 +1,5 @@
 #!/bin/bash
-# Creates a compressed binary diff (patch) between two directories.
+# Creates a compressed binary diff (patch) between two directories, or specific archives of directories.
 # Author: Sukender (Benoit Neil)
 # Licence: WTFPL v2 (see COPYING.txt)
 
@@ -26,10 +26,11 @@ positionalOption() {
 usage() {
 	echo ""
 	echo "$toolName"
-	echo "Creates a compressed binary diff (patch) between two directories."
+	echo "Creates a compressed binary diff (patch) between two directories, or archives of directories."
+	echo "Archives (replacing directories) are not whatever a compressor can do: they must be tar-based, preferably generated from '$arToolName'."
 	echo
 	echo "Syntax:"
-	echo "  diff [options] oldDirectory newDirectory"
+	echo "  diff [options] old new"
 	echo
 	echo "Options:"
 	echo "  -h, --help"
@@ -96,11 +97,6 @@ if [ -z "$dir1" ] || [ -z "$dir2" ]; then
 	exit 1;
 fi
 
-if [ ! -d "$dir2" ]; then
-	echo "\"$dir2\" ('newDirectory') is not a directory!"
-	exit 1
-fi
-
 chooseDelta "$deltaChoice"
 
 if (( $verbosity >= 2 )); then
@@ -125,22 +121,22 @@ rm pipe1 pipe2 "$patchfile" 2> /dev/null
 mkfifo pipe1 pipe2 || exit 2
 
 readBase "$dir1" pipe1		# Handles dir1 as an archive or dir
+readBase "$dir2" pipe2		# Handles dir2 as an archive or dir
 
 if [ "$delta" == "xdelta3" ]; then
 	# xdelta3
 
 	# TODO try the xdelta invocation? : XDELTA="-s source" tar --use-compress-program=xdelta3 -cf target.vcdiff target
-	#$tarDir --directory="$dir1" . > pipe1 & $tarDir --directory="$dir2" . > pipe2 & xdelta3 -e -9 -S "none" -s pipe1 pipe2 | xz > "$patchfile" || exit 2
-	#$tarDir --directory="$dir1" . > pipe1 &
-	$tarDir --directory="$dir2" . > pipe2 & xdelta3 -e -9 -s pipe1 pipe2 | xz > "$patchfile" || exit 2
-	#$tarDir --directory="$dir1" . > pipe1 & $tarDir --directory="$dir2" . > pipe2 & xdelta3 -e -9 -S lzma -s pipe1 pipe2 "$patchfile" || exit 2
+	#xdelta3 -e -9 -S "none" -s pipe1 pipe2 | xz > "$patchfile" || exit 2
+	xdelta3 -e -9 -s pipe1 pipe2 | xz > "$patchfile" || exit 2
+	#xdelta3 -e -9 -S lzma -s pipe1 pipe2 "$patchfile" || exit 2
 else
 	# rdiff
 
 	rm pipe1sig 2> /dev/null
 	mkfifo pipe1sig || exit 2
 	#$tarDir --directory="$dir1" . > pipe1 &
-	rdiff signature pipe1 pipe1sig & $tarDir --directory="$dir2" . > pipe2 & rdiff delta pipe1sig pipe2 | xz > "$patchfile" || exit 2
+	rdiff signature pipe1 pipe1sig & rdiff delta pipe1sig pipe2 | xz > "$patchfile" || exit 2
 		# > /dev/null
 	rm pipe1sig
 fi
