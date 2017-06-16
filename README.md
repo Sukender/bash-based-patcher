@@ -42,7 +42,6 @@ See also the list of [contributors](https://github.com/Sukender/bash-based-patch
   - [```bbppatch```] Rename patched directory accordingly.
 - [```bbppatch```] Delete or rename patched directory upon failure.
 - [```bbpdiff```] Handle upload of patches (FTP or such).
-- Add wome kind of progress display, as in ```bbpar```.
 - Better error handling: test all pipe statuses (```${PIPESTATUS[i]}```) and async statuses everywhere, and stop on error.
 - ```make install``` should have a way to configure install path.
 - Add a resilience towards "small changes" in base directories (maintainer and users).
@@ -53,6 +52,7 @@ See also the list of [contributors](https://github.com/Sukender/bash-based-patch
   - This may imply issues in creating proper diffs.
 - (*Maybe*) Handling the initial release (such as a patch from "nothing" to "something"), especially if upload/download is handled.
 - (*Maybe*) Add an option for in-place patching.
+- (*Maybe*) Add better progress bars display.
 
 Will probably never be done, beacause the toolset is supposedly basic:
   - Translation into another language than English (even though this is not my mother tongue language).
