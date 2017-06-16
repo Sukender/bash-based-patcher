@@ -1,10 +1,11 @@
 BBP: Sukender's bash-based patcher
 ----------------------------------
 
-This toolset is a very basic and simple diff/patch.
+Basic and simple toolset to help diff/patch directories.
 
 Author:
-  Sukender (Benoit NEIL) - sukender at free dot fr
+  - Sukender (Benoit NEIL) - sukender at free dot fr
+  - Maybe you? Feel free to participate!
 
 Goals:
   - Maintain a (remote) directory up-to-date. The "maintainer" sends updates to "users".
