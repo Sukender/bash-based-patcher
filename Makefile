@@ -22,7 +22,7 @@ uninstall:
 	-rm $(INSTALL_PATH)/bbp_config.sh
 
 clean:
-	-rm -r _diff_unit_test
+	-rm -r _diff_unit_test patch.xz delta.patch
 
 # Unit test should not be deployed actually, but as the tool is rather new and fragile, it may be useful
 # For now, installation happens with Makefile, hence the inclusion of it in the package
