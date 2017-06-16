@@ -37,11 +37,12 @@ See also the list of [contributors](https://github.com/Sukender/bash-based-patch
 
 ### To-do
 - Explicit patch names:
-  - [*bbpdiff*] Name patches explicitely, such as ```Patch 'MyOldDir' to 'MyNewDir'.xz```.
-  - [*bbppatch*] Handle auto-detection of which patch to choose (if multiple ones): list available patches (with the same 'old' part), and try to guess the highest version if multiple are found.
-  - [*bbppatch*] Rename patched directory accordingly.
-- [*bbppatch*] Delete or rename patched directory upon failure.
-- [*bbpdiff*] Handle upload of patches (FTP or such).
+  - [```bbpdiff```] Name patches explicitely, such as ```Patch 'MyOldDir' to 'MyNewDir'.xz```.
+  - [```bbppatch```] Handle auto-detection of which patch to choose (if multiple ones): list available patches (with the same 'old' part), and try to guess the highest version if multiple are found.
+  - [```bbppatch```] Rename patched directory accordingly.
+- [```bbppatch```] Delete or rename patched directory upon failure.
+- [```bbpdiff```] Handle upload of patches (FTP or such).
+- Add wome kind of progress display, as in ```bbpar```.
 - Better error handling: test all pipe statuses (```${PIPESTATUS[i]}```) and async statuses everywhere, and stop on error.
 - ```make install``` should have a way to configure install path.
 - Add a resilience towards "small changes" in base directories (maintainer and users).
