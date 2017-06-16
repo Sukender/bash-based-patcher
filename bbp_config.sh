@@ -25,7 +25,7 @@ arTool="$BBD_HOME/$arToolName"
 # Other
 archiveExtension=".tar.xz"		# "-J" option of tar is used to select the XZ compressor. Do not change extension without changing tar arguments.
 archiveSuffix=".reference$archiveExtension"
-XZ_OPT=-9	# Global compression ratio for .tar.xz
+XZ_OPT="-9 -T0"	# Global compression ratio for .tar.xz, with "auto multithreading"
 
 # --------------------------------------------------------------------------------
 # Documentation
