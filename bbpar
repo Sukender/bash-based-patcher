@@ -82,11 +82,16 @@ done
 archive="$(basename "$dir1")$archiveSuffix"
 
 rm "$archive" 2> /dev/null
-if [[ "$has_pv" != "0" ]]; then
-	tar -Jcf - --directory="$dir1" . | pv -N "Archive" > "$archive"
-	res=${PIPESTATUS[0]}
+if (( $verbosity >= 1 )); then
+	if (( $has_pv != 0 )); then
+		tar -Jcf - --directory="$dir1" . | pv -N "Archive" > "$archive"
+		res=${PIPESTATUS[0]}
+	else
+		tar -acf "$archive" --directory="$dir1" . --checkpoint=.10
+		res="$?"
+	fi
 else
-	tar -acf "$archive" --directory="$dir1" . --checkpoint=.10
+	tar -acf "$archive" --directory="$dir1" .
 	res="$?"
 fi
 
