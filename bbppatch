@@ -46,7 +46,7 @@ usage() {
 	echo "  -g, --get URL"
 	echo "      Downloads URL as the patch to apply."
 	echo "  -p, --patch NAME"
-	echo "      Uses the patch file NAME (default: '$defaultpatchfile')."
+	echo "      Uses the local patch file NAME (instead of auto-detection)."
 	echo "  -D, --delta NAME"
 	echo "      Chooses the delta-compression tool NAME. Possibles choices are rdiff, xdelta3."
 	echo "      You *MUST* select the one used for compression. There is no auto-detection."
@@ -110,14 +110,61 @@ fi
 
 chooseDelta "$deltaChoice"
 
+# Handling $patchfile
+if [ ! -n "$patchUrl" ]; then
+	if [ ! -n "$patchfile" ]; then
+		# Auto patch finding (pun not intended!), in local
+		searchExpression="$(autoPatchSearch1 "$dir1")"
+		#searchExpression2="$(autoPatchSearch2 "$dir1")"
+		count=$(find . -maxdepth 1 -mindepth 1 -iname "$searchExpression" -type f | wc -l)
+		if (( $count == 1 )); then
+			while read f; do
+				patchfile="$f"
+			done <<< "$(find . -maxdepth 1 -mindepth 1 -iname "$searchExpression" -type f)"
+		elif (( $count > 1 )); then
+			echo "Found multiple patches that match! Please specify the patch name, or remove useless patches."
+			echo "Searched: $searchExpression"
+			exit 1
+		# elif (( $count <= 0 )); then
+			# # Second try
+			# count=$(find . -maxdepth 1 -mindepth 1 -iname "$searchExpression2" -type f | wc -l)
+			# if (( $count == 1 )); then
+				# find . -maxdepth 1 -mindepth 1 -iname "$searchExpression2" -type f | while read f; do
+					# patchfile="$f"
+				# done
+			# elif (( $count > 1 )); then
+				# echo "Found multiple patches that match! Please specify the patch name, or remove useless patches."
+				# echo "Searched: $searchExpression2"
+				# echo "Searched: $searchExpression"
+				# exit 1
+			# fi
+		fi
+		if [ ! -n "$patchfile" ]; then
+			if [ ! -f "$defaultpatchfile" ]; then
+				echo "Found no patch. Please specify the patch name."
+				echo "Searched: $defaultpatchfile"
+				echo "Searched: $searchExpression2"
+				echo "Searched: $searchExpression"
+				exit 1
+			fi
+			patchfile="$defaultpatchfile"
+		fi
+	fi
+else
+	if [ ! -n "$patchfile" ]; then
+		# Auto patch naming for distant retreival
+		patchfile="$defaultpatchfile"
+	fi
+fi
+
 if (( $verbosity >= 2 )); then
 	echo "$toolName"
 	echo $separatorDisplay
 	echo ""
 	echo "Applying patch on '$dir1', to '$dir2'"
-	echo "Patch file: $patchfile"
-	echo "Patch URL: $patchUrl"
-	echo "Delta: $delta"
+	echo "Local fatch file: $patchfile"
+	echo "Patch URL to retreive: $patchUrl"
+	echo "Delta tool: $delta"
 fi
 
 # --------------------------------------------------------------------------------

@@ -33,7 +33,21 @@ testLabel() {
 }
 
 # --------------------------------------------------------------------------------
-# Test 1 - Simple patch creation/application
+# Test - Some utility functions
+
+testLabel "Utility functions"
+
+res="$(autoPatchName "subdir" "subdir2/")"		# One with trailing slash, one without
+if [ "$res" != "Patch 'subdir' to 'subdir2'.xz" ]; then err_report $LINENO; fi
+
+res="$(autoPatchName "some dir/some subdir" "some dir2/some subdir2/")"		# One with trailing slash, one without
+if [ "$res" != "Patch 'some subdir' to 'some subdir2'.xz" ]; then err_report $LINENO; fi
+
+res="$(autoPatchName "some dir/some subdir$archiveSuffix" "some dir2/some subdir2$archiveSuffix")"
+if [ "$res" != "Patch 'some subdir' to 'some subdir2'.xz" ]; then err_report $LINENO; fi
+
+# --------------------------------------------------------------------------------
+# Test - Simple patch creation/application
 
 testSimple_Setup() {
 	# Clear
@@ -90,7 +104,7 @@ testSimple "rdiff"
 testSimple "xdelta3"
 
 # --------------------------------------------------------------------------------
-# Test 2 - As test 1 but base directory may now be an archive
+# Test - As test 1 but base directory may now be an archive
 
 # testFromArchive deltaTool diffSourceName patchSourceName
 testFromArchive() {
@@ -105,7 +119,7 @@ testFromArchive() {
 	#rm -r "1"         # Remove original "1"
 
 	# Operate
-	"$diffTool" -D "$1" "$2" "$3"       # Build
+	"$diffTool" -D "$1" "$2" "$3"      # Build
 	"$patchTool" -D "$1" "$4" "2_"     # Apply
 
 	# Test
@@ -163,6 +177,9 @@ testSubdir_noLabel
 
 # Restore baseDir
 baseDir="$initialBaseDir"
+
+# --------------------------------------------------------------------------------
+# End
 
 echo ""
 echo $separatorDisplay

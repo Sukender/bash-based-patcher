@@ -44,10 +44,7 @@ bbp patch "oldDir.reference.tar.xz" -p "patch1234.xz"
 ## Future work & ideas
 ### To-do
 Stuff that should be done:
-- Explicit patch names:
-  - [```bbpdiff```] Name patches explicitely, such as ```Patch 'MyOldDir' to 'MyNewDir'.xz```.
-  - [```bbppatch```] Handle auto-detection of which patch to choose (if multiple ones): list available patches (with the same 'old' part), and try to guess the highest version if multiple are found.
-  - [```bbppatch```] Rename patched directory accordingly.
+- [```bbppatch```] Change patched directory according to the patch name, if explicit (such as ```Patch 'MyOldDir' to 'MyNewDir'.xz```).
 - [```bbppatch```] Delete or rename patched directory upon failure.
 - [```bbpdiff```] Handle upload of patches (FTP or such).
 - Better error handling: test all pipe statuses (```${PIPESTATUS[i]}```) and async statuses everywhere, and stop on error.
@@ -59,11 +56,13 @@ Stuff that should be done:
 
 ### Maybe to-do
 Nice ideas that may require too much amount of work regarding to the usefulness of the feature:
+- [```bbpdiff```, ```bbpar```] Allow tweaking compression & delta parameters, to allow faster operations.
 - Add support for custom archives (anything, not just ".tar.something") as base directory (both for diff and patch).
   - This may imply issues in creating proper diffs.
 - Handling the initial release (such as a patch from "nothing" to "something"), especially if upload/download is handled.
 - Add an option for in-place patching.
 - Add better progress bars display.
+- [```bbppatch```] Add better patch name auto-detection: list available patches (with the same 'old' part), and try to guess the highest version if multiple are found.
 
 ### Will probably never be done
 ...beacause the toolset is supposedly basic:

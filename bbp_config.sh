@@ -35,11 +35,12 @@ doc_dependencies="Dependencies:
   - rdiff or xdelta3 to make the binary diff.
   - named pipes to avoid storing intermediate files to disk (much faster: everything in memory).
   - XZ (xz-utils) for tar to compress the output and make patches space-efficient.
+  - awk for some text processing.
+  - [patch only] wget to retreive a distant patch.
   - (optional) pv, to display progress.
   - (optional) make, to install, test, and package.
-  - [patch only] wget to retreive a distant patch.
 All-in-one apt-style command line:
-  sudo apt install tar rdiff xdelta3 xz-utils wget pv
+  sudo apt install tar rdiff xdelta3 xz-utils wget pv awk
 "
 
 doc_errorCodes="Error codes:
@@ -193,7 +194,30 @@ readBaseSync() {
 	readBase_sub "$1" "$2" "0"
 }
 
+# Prints the patch name from dir1 and 2 ($1 $2).
+autoPatchName() {
+	local b1="${1%$archiveSuffix}"		# Remove suffix
+	local b2="${2%$archiveSuffix}"		# Remove suffix
+	local b1="$(basename "$b1")"
+	local b2="$(basename "$b2")"
+	echo "Patch '$b1' to '$b2'.xz"
+}
+
+# Prints the first patch search expression
+autoPatchSearch1() {
+	local b1="${1%$archiveSuffix}"		# Remove suffix
+	local b1="$(basename "$b1")"
+	echo "Patch '$b1' to '*'.xz"
+}
+
+# Prints the second patch search expression
+# autoPatchSearch2() {
+	# local b1="${1%$archiveSuffix}"		# Remove suffix
+	# local b1="$(basename "$b1")"
+	# echo "Patch '$b1*' to '*'.xz"
+# }
+
 # --------------------------------------------------------------------------------
 # Default-initialized variables
 verbosity="$defaultVerbosity"
-patchfile="$defaultpatchfile"
+patchfile=""

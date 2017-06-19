@@ -40,7 +40,7 @@ usage() {
 	echo "  --version"
 	echo "      Displays a short (parsable) version information and exits."
 	echo "  -p, --patch NAME"
-	echo "      Changes the output patch file name to NAME (default: '$defaultpatchfile')."
+	echo "      Changes the output patch file name to NAME (default is automatically generated)."
 	echo "      File is always overwritten without confirmation."
 	echo "  -D, --delta NAME"
 	echo "      Chooses the delta-compression tool NAME. Possibles choices are rdiff, xdelta3."
@@ -99,13 +99,18 @@ fi
 
 chooseDelta "$deltaChoice"
 
+if [ ! -n "$patchfile" ]; then
+	# Auto patch naming
+	patchfile="$(autoPatchName "$dir1" "$dir2")"
+fi
+
 if (( $verbosity >= 2 )); then
 	echo "$toolName"
 	echo $separatorDisplay
 	echo ""
 	echo "Generating patch from '$dir1' to '$dir2'"
-	echo "Patch file: $patchfile"
-	echo "Delta: $delta"
+	echo "Output patch file: $patchfile"
+	echo "Delta tool: $delta"
 fi
 
 # --------------------------------------------------------------------------------
@@ -130,7 +135,7 @@ if [ "$delta" == "xdelta3" ]; then
 	#-S "none" -B 67108864 -W 16777216 -P 67108864 -D -R
 	
 	# Using 1 GB of window to increase efficiency for large files
-	if [[ "$has_pv" != "0" ]]; then
+	if (( $verbosity >= 1 )) && (( $has_pv != 0 )); then
 		xdelta3 -e -0 -W 16777216 -B 1073741824 -s pipe1 pipe2 | xz | pv -N "Patch" > "$patchfile" || exit 2
 	else
 		xdelta3 -e -0 -W 16777216 -B 1073741824 -s pipe1 pipe2 | xz > "$patchfile" || exit 2
@@ -141,7 +146,7 @@ else
 	rm pipe1sig 2> /dev/null
 	mkfifo pipe1sig || exit 2
 	#$tarDir --directory="$dir1" . > pipe1 &
-	if [[ "$has_pv" != "0" ]]; then
+	if (( $verbosity >= 1 )) && (( $has_pv != 0 )); then
 		rdiff signature pipe1 pipe1sig & rdiff delta pipe1sig pipe2 | xz | pv -N "Patch" > "$patchfile" || exit 2
 	else
 		rdiff signature pipe1 pipe1sig & rdiff delta pipe1sig pipe2 | xz > "$patchfile" || exit 2
