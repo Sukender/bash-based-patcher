@@ -46,6 +46,18 @@ if [ "$res" != "Patch 'some subdir' to 'some subdir2'.xz" ]; then err_report $LI
 res="$(autoPatchName "some dir/some subdir$archiveSuffix" "some dir2/some subdir2$archiveSuffix")"
 if [ "$res" != "Patch 'some subdir' to 'some subdir2'.xz" ]; then err_report $LINENO; fi
 
+res="$(extractNewName "some dir/some patch")"
+if [ -n "$res" ]; then err_report $LINENO; fi
+
+res="$(extractNewName "Patch 'old name' to 'new name'.xz")"
+if [ "$res" != "new name" ]; then err_report $LINENO; fi
+
+res="$(extractNewName "./Patch 'old name' to 'new name'.xz")"
+if [ "$res" != "new name" ]; then err_report $LINENO; fi
+
+res="$(extractNewName "some dir/Patch 'old name' to 'new name (a.b)'.xz")"
+if [ "$res" != "new name (a.b)" ]; then err_report $LINENO; fi
+
 # --------------------------------------------------------------------------------
 # Test - Simple patch creation/application
 

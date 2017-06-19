@@ -44,9 +44,9 @@ bbp patch "oldDir.reference.tar.xz" -p "patch1234.xz"
 ## Future work & ideas
 ### To-do
 Stuff that should be done:
-- [```bbppatch```] Change patched directory according to the patch name, if explicit (such as ```Patch 'MyOldDir' to 'MyNewDir'.xz```).
 - [```bbppatch```] Delete or rename patched directory upon failure.
 - [```bbpdiff```] Handle upload of patches (FTP or such).
+- [```bbppatch```] Automatically detect if patch has been made with xdelta3 or rdiff.
 - Better error handling: test all pipe statuses (```${PIPESTATUS[i]}```) and async statuses everywhere, and stop on error.
 - ```make install``` should have a way to configure install path.
 - Add a resilience towards "small changes" in base directories (maintainer and users).

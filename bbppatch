@@ -104,10 +104,6 @@ if [ -z "$dir1" ]; then
 	exit 1;
 fi
 
-if [ -z "$dir2" ]; then
-	dir2="${dir1}_patched"
-fi
-
 chooseDelta "$deltaChoice"
 
 # Handling $patchfile
@@ -156,6 +152,15 @@ else
 		patchfile="$defaultpatchfile"
 	fi
 fi
+
+# Output dir
+if [ -z "$dir2" ]; then
+	dir2="$(extractNewName "$patchfile")"
+	if [ -z "$dir2" ]; then
+		dir2="${dir1}_patched"
+	fi
+fi
+
 
 if (( $verbosity >= 2 )); then
 	echo "$toolName"

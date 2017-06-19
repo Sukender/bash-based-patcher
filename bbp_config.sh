@@ -5,7 +5,7 @@
 
 # --------------------------------------------------------------------------------
 # Constants
-toolVersion="0.4.3"
+toolVersion="0.5"
 toolNameUnversionned="Sukender's Bash-Based Patcher (BBP)"
 toolName="$toolNameUnversionned v$toolVersion"
 separatorDisplay="--------------------------------------------------------------------------------"
@@ -216,6 +216,16 @@ autoPatchSearch1() {
 	# local b1="$(basename "$b1")"
 	# echo "Patch '$b1*' to '*'.xz"
 # }
+
+# Extract 'dir2' part (= 'new') from an explicit patch name.
+extractNewName() {
+	local b1="$(basename "$1")"
+	if [[ "$b1" =~ ^Patch\ \'(.*)\'\ to\ \'(.*)\'\.xz$ ]]; then
+		echo "$(basename "${BASH_REMATCH[2]}")"
+	else
+		echo ""
+	fi
+}
 
 # --------------------------------------------------------------------------------
 # Default-initialized variables
