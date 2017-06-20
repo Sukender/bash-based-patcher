@@ -28,7 +28,7 @@ clean:
 # For now, installation happens with Makefile, hence the inclusion of it in the package
 package: all
 	-rm "$$toolName.tar.xz"
-	source "./bbp_config.sh" && tar -Jcf "$$toolName.tar.xz" bbp bbpdiff bbppatch bbpar bbp_config.sh bbp_unit_test.sh COPYING.txt README.txt Makefile
+	source "./bbp_config.sh" && tar -Jcf "$$toolName.tar.xz" bbp bbpdiff bbppatch bbpar bbp_config.sh bbp_unit_test.sh COPYING.txt README.md Makefile
 
 test: all
 	./bbp_unit_test.sh
