@@ -19,8 +19,8 @@ Basic and simple toolset to help diff/patch directories.
 #### Basic
 ```bash
 # On a first machine:
-bbp diff "oldDir" "newDir"    # Generate the patch (say "patch.xz")
-blah-blah-blah                # Upload generated file somewhere
+bbp diff "oldDir" "newDir"    # Generate the patch ("Patch 'oldDir' to 'newDir'.xz")
+blah-blah-blah                # Upload generated file somewhere, say "some.server.com/patch.xz"
 
 # On a second machine:
 bbp patch "oldDirCopy" -g https://some.server.com/patch.xz      # Download and apply patch
