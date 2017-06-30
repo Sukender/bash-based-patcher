@@ -74,10 +74,14 @@ testSimple_Setup() {
 	echo "aaaaaa" > "1/a.txt"			# Will be updated
 	echo "bbbbbbbbbb" > "1/b.txt"		# Will be deleted
 	echo "ccccc" > "1/c.txt"			# Will be left as-is
+	head -c 100000 /dev/urandom > "1/e" # Will be completely new
+	head -c 100000 /dev/urandom > "1/f" # Will be renamed
 
 	echo "aaaaaa v2!" > "2/a.txt"
 	cp "1/c.txt" "2/c.txt"
-	echo "ddd-dddddddd-ddddd" > "2/d.txt"		# Will be added
+	echo "ddd-dddddddd-ddddd" > "2/d.txt"	# Will be added
+	head -c 110000 /dev/urandom > "2/e"
+	cp "1/f" "2/f2"
 }
 
 testSimple_Test() {
@@ -85,10 +89,17 @@ testSimple_Test() {
 	if [   -f "2_/b.txt" ]; then err_report $LINENO; fi
 	if [ ! -f "2_/c.txt" ]; then err_report $LINENO; fi
 	if [ ! -f "2_/d.txt" ]; then err_report $LINENO; fi
+	if [ ! -f "2_/e"     ]; then err_report $LINENO; fi
+	if [   -f "2_/f"     ]; then err_report $LINENO; fi
+	if [ ! -f "2_/f2"    ]; then err_report $LINENO; fi
 
 	read line < "2_/a.txt"; if [ "$line" != "aaaaaa v2!"         ]; then err_report $LINENO; fi
 	read line < "2_/c.txt"; if [ "$line" != "ccccc"              ]; then err_report $LINENO; fi
 	read line < "2_/d.txt"; if [ "$line" != "ddd-dddddddd-ddddd" ]; then err_report $LINENO; fi
+	eSize="$(du -sb "2_/e" | awk '{ print $1 }')"
+	if (( eSize != 110000 )); then err_report $LINENO; fi
+	eSize="$(du -sb "2_/f2" | awk '{ print $1 }')"
+	if (( eSize != 100000 )); then err_report $LINENO; fi
 }
 
 # testSimple deltaTool
