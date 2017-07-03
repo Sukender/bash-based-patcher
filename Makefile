@@ -35,3 +35,6 @@ package: all
 
 test: all
 	./bbp_unit_test.sh
+
+# All-in-one lazy command :)
+fullrelease: test install package
