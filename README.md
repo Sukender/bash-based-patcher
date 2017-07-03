@@ -19,25 +19,26 @@ Basic and simple toolset to help diff/patch directories.
 #### Basic
 ```bash
 # On a first machine:
-bbp diff "oldDir" "newDir"    # Generate the patch ("Patch 'oldDir' to 'newDir'.xz")
-blah-blah-blah                # Upload generated file somewhere, say "some.server.com/patch.xz"
+bbp diff "oldDir" "newDir"          # Generate the patch ("Patch_(oldDir)_to_(newDir).xz")
+blah-blah-blah                      # Upload generated file somewhere, say "some.server.com/patch.xz"
 
 # On a second machine:
 bbp patch "oldDirCopy" -g https://some.server.com/patch.xz      # Download and apply patch
 ```
 
 #### Archives
+Directories and tar.xz archives are used the same way and are exchangeable.
 ```bash
 # On a first machine:
-                                                # My "oldDir" is too heavy: compress it as a tar.xz (LZMA2)
-bbp ar "oldDir"                                 # Using default archive name ("oldDir.reference.tar.xz")
+                                    # I want to archive my (heavy) "oldDir", but keep it bbp-compatible.
+bbp ar "oldDir"                     # Using 'bbp ar', with default archive name ("oldDir.reference.tar.xz").
 
 bbp diff "oldDir.reference.tar.xz" "newDir"     # Now generate the patch, but use the newly created "reference"
                                                 # archive in place of the source directory.
                                                 # Note we can do the same with "newDir".
 
 # On a second machine:
-bbp patch "oldDir.reference.tar.xz" -p "patch1234.xz"    # Here we assume the patch is a local file
+bbp patch "oldDir.reference.tar.xz" -p "patch.xz"    # Apply, using a local patch (option '-p').
 ```
 
 ## Future work & ideas
@@ -45,7 +46,7 @@ bbp patch "oldDir.reference.tar.xz" -p "patch1234.xz"    # Here we assume the pa
 Stuff that should be done:
 - [```bbppatch```] Upon failure, cleanup everything: delete or rename patched directory, pipes and temporary downloaded patch.
 - [```bbpdiff```] Handle upload of patches (FTP or such).
-- [```bbppatch```] Automatically detect if patch has been made with xdelta3 or rdiff. Maybe using a hash value?
+- [```bbppatch```] Automatically detect if patch has been made with xdelta3 or rdiff. Maybe using a hash value, or by reading a few bytes of the patch.
 - Better error handling: test all pipe statuses (```${PIPESTATUS[i]}```) and async statuses everywhere, and stop on error.
 - ```make install``` should have a way to configure install path.
 - Add a resilience towards "small changes" in base directories (maintainer and users).
