@@ -21,6 +21,8 @@ patchToolName="bbppatch"
 patchTool="$BBD_HOME/$patchToolName"
 arToolName="bbpar"
 arTool="$BBD_HOME/$arToolName"
+infoToolName="bbpinfo"
+infoTool="$BBD_HOME/$infoToolName"
 
 # Other
 archiveExtension=".tar.xz"		# "-J" option of tar is used to select the XZ compressor. Do not change extension without changing tar arguments.
@@ -111,12 +113,18 @@ evalHas rdiff
 
 # chooseDelta_explicit userChoice currentDeltaIteration
 chooseDelta_explicit() {
+	if [[ "$1" =~ ^UNKNOWN ]]; then
+		# Case where this function is used with the result of bbpinfo, and that result is not valid.
+		echo "Delta tool could not be detected. Please ensure your patch file is valid."
+		exit 1
+	fi
+
 	hasVariable="has_$2"
 	if [ "$1" == "$2" ]; then
 		if [[ "${!hasVariable}" != "0" ]]; then
 			delta="$2"
 		else
-			echo "Delta tool '$2' was choosen but seems not installed and in your path."
+			echo "Delta tool '$2' was selected but seems not installed and in your path."
 		fi
 	fi
 }
@@ -137,6 +145,16 @@ chooseDelta() {
 	echo "Error: your need either rdiff or xdelta3 installed and in your path. Please install."
 	exit 1
 }
+
+autoDetectedDelta() {
+	local d="$("$infoTool" "$1")"
+	chooseDelta_explicit "$d" "$d"
+	if [ -n "$delta" ]; then return; fi
+
+	echo "Error: your need either rdiff or xdelta3 installed and in your path. Please install."
+	exit 1
+}
+
 
 # --------------------------------------------------------------------------------
 # Mandatory tools availability

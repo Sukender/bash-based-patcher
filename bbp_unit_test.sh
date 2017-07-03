@@ -37,6 +37,8 @@ testLabel() {
 
 testLabel "Utility functions"
 
+# *** Patch name generation and parsing ***
+
 res="$(autoPatchName "subdir" "subdir2/")"		# One with trailing slash, one without
 if [ "$res" != "Patch_(subdir)_to_(subdir2).xz" ]; then err_report $LINENO; fi
 
@@ -57,6 +59,11 @@ if [ "$res" != "new name" ]; then err_report $LINENO; fi
 
 res="$(extractNewName "some dir/Patch_(_to_(old name)_to_(new @name (a.b)).xz")"
 if [ "$res" != "new @name (a.b)" ]; then err_report $LINENO; fi
+
+# *** bbpinfo ***
+
+res="$("$infoTool" "dummyName")"
+if [[ ! "$res" =~ ^UNKNOWN ]]; then err_report $LINENO; fi
 
 # --------------------------------------------------------------------------------
 # Test - Simple patch creation/application
@@ -110,8 +117,8 @@ testSimple() {
 	testSimple_Setup
 
 	# Operate
-	"$diffTool" -D "$1" "1" "2" -p delta.patch          # Build
-	"$patchTool" -D "$1" "1" -p delta.patch -o "2_"     # Apply
+	"$diffTool" -D "$1" "1" "2" -p delta.patch    # Build
+	"$patchTool" "1" -p delta.patch -o "2_"       # Apply
 	rm delta.patch
 
 	# Test
@@ -142,8 +149,8 @@ testFromArchive() {
 	#rm -r "1"         # Remove original "1"
 
 	# Operate
-	"$diffTool" -D "$1" "$2" "$3"        # Build
-	"$patchTool" -D "$1" "$4" -o "2_"    # Apply
+	"$diffTool" -D "$1" "$2" "$3"     # Build
+	"$patchTool" "$4" -o "2_"         # Apply
 	local patchfile="$(autoPatchName "$2" "$3")"
 	rm "$patchfile"
 

@@ -46,13 +46,14 @@ bbp patch "oldDir.reference.tar.xz" -p "patch.xz"    # Apply, using a local patc
 Stuff that should be done:
 - [```bbppatch```] Upon failure, cleanup everything: delete or rename patched directory, pipes and temporary downloaded patch.
 - [```bbpdiff```] Handle upload of patches (FTP or such).
-- [```bbppatch```] Detect if patch has been made with xdelta3 or rdiff, and print a proper error message.
 - Better error handling: test all pipe statuses (```${PIPESTATUS[i]}```) and async statuses everywhere, and stop on error.
 - ```make install``` should have a way to configure install path.
 - Add a resilience towards "small changes" in base directories (maintainer and users).
   - "Small changes" has to be clearly defined.
   - The goal is to allow both sides (maintainer & users) to tweak some files (say, config files), and still make the patch work properly.
   - Allowed changes may be somewhat hard-coded. Ex : a list of files that must be completely included in the patch when changed, even if a portion of them would suffice to describe differences.
+- Allow exclusions, to "skip" paths (files or directories), as if they were removed from the source ('old'). This would allow patching a **part** of a directory.
+  - Open question: how can we be sure to get the same filter when applying the patch?
 
 ### Maybe to-do
 Nice ideas that may require too much amount of work regarding to the usefulness of the feature:

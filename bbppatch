@@ -45,9 +45,6 @@ usage() {
 	echo "  -o, --output NAME"
 	echo "      Specifies an output name for 'new' directory."
 	echo "      If 'new' is omitted, it is automatically generated."
-	echo "  -D, --delta NAME"
-	echo "      Chooses the delta-compression tool NAME. Possibles choices are rdiff, xdelta3."
-	echo "      You *MUST* select the one used for compression. There is no auto-detection."
 	echo "  -v, --verbose"
 	echo "      Adds a level of verbosity (more information). Default level = $defaultVerbosity."
 	echo "  -q, --quiet"
@@ -82,9 +79,6 @@ case "$1" in
 	-o|--output)
 		shift; dir2="$1"; shift;
 		;;
-	-D|--delta)
-		shift; deltaChoice="$1"; shift;
-		;;
 	-g|--get)
 		shift; patchUrl="$1"; shift;
 		;;
@@ -104,8 +98,6 @@ if [ -z "$dir1" ]; then
 	usage;
 	exit 1;
 fi
-
-chooseDelta "$deltaChoice"
 
 # Handling $patchfile
 if [ ! -n "$patchUrl" ]; then
@@ -183,6 +175,8 @@ if [ -n "$patchUrl" ]; then
 	fi
 	wget "$patchUrl" -O "$patchfile" || exit 3
 fi
+
+autoDetectedDelta "$patchfile"
 
 rm -r "$dir2" 2> /dev/null
 mkdir -p "$dir2"
