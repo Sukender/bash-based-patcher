@@ -7,7 +7,6 @@
 
 # TODO:
 #  - Test patch upload / retreival
-#  - Test various options
 
 # Dependencies, error codes, documentation: see "bbp_config.sh"
 #initDir="$PWD"
@@ -172,6 +171,28 @@ testFromArchive "rdiff"   "1$archiveSuffix" "2" "1"                  # Build fro
 
 testFromArchive "xdelta3" "1$archiveSuffix" "2$archiveSuffix" "1$archiveSuffix"    # Build from archive/archive, apply from archive
 testFromArchive "rdiff"   "1$archiveSuffix" "2$archiveSuffix" "1$archiveSuffix"    # Build from archive/archive, apply from archive
+
+# --------------------------------------------------------------------------------
+# Test - Various command line options
+
+testLabel "XZ compression option"
+
+# Setup
+testSimple_Setup
+
+# Operate
+"$arTool" -0 "1"      # Create archive
+rm -r "1"             # Remove original "1"
+"$diffTool" "1$archiveSuffix" "2" -p delta.patch -0     # Build
+"$patchTool" "1$archiveSuffix" -p delta.patch -o "2_"   # Apply
+rm delta.patch
+
+# Test
+testSimple_Test
+
+# Clear
+cd - > /dev/null
+rm -rf "$baseDir"
 
 # --------------------------------------------------------------------------------
 # Test from a directory that is not the parent of dir1 and dir2
