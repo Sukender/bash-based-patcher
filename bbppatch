@@ -16,12 +16,8 @@ positionalOption() {
 	if [ -z "$dir1" ]; then
 		dir1="$1"
 	else
-		if [ -z "$dir2" ]; then
-			dir2="$1"
-		else
-			echo "Unrecognized option: $1"
-			exit 1
-		fi
+		echo "Unrecognized option: $1"
+		exit 1
 	fi
 }
 
@@ -32,8 +28,7 @@ usage() {
 	echo "Archive (replacing 'old' directory) is not whatever a compressor can do: it must be tar-based, preferably generated from '$arToolName'."
 	echo
 	echo "Syntax:"
-	echo "  patch [options] old [new]"
-	echo "  If 'new' is omitted, it is automatically generated."
+	echo "  patch [options] old"
 	echo
 	echo "Options:"
 	echo
@@ -47,6 +42,9 @@ usage() {
 	echo "      Downloads URL as the patch to apply."
 	echo "  -p, --patch NAME"
 	echo "      Uses the local patch file NAME (instead of auto-detection)."
+	echo "  -o, --output NAME"
+	echo "      Specifies an output name for 'new' directory."
+	echo "      If 'new' is omitted, it is automatically generated."
 	echo "  -D, --delta NAME"
 	echo "      Chooses the delta-compression tool NAME. Possibles choices are rdiff, xdelta3."
 	echo "      You *MUST* select the one used for compression. There is no auto-detection."
@@ -80,6 +78,9 @@ case "$1" in
 		;;
 	-p|--patch)
 		shift; patchfile="$1"; shift;
+		;;
+	-o|--output)
+		shift; dir2="$1"; shift;
 		;;
 	-D|--delta)
 		shift; deltaChoice="$1"; shift;
@@ -214,8 +215,8 @@ fi
 if [ "$delta" == "xdelta3" ]; then
 	# xdelta3
 	readBase "$dir1" pipe1		# Handles dir1 as an archive or dir
-	xz -kd "$patchfile" --stdout > pipe2ar & xdelta3 -d -s pipe1 pipe2ar pipe2 & tar -x --directory="$dir2" . < pipe2
-	#xdelta3 -d -s pipe1 "$patchfile" pipe2 & tar -x --directory="$dir2" . < pipe2
+	xz -kd "$patchfile" --stdout > pipe2ar & xdelta3 -d -W 16777216 -B 1073741824 -s pipe1 pipe2ar pipe2 & tar -x --directory="$dir2" . < pipe2
+	#xdelta3 -d -W 16777216 -B 1073741824 -s pipe1 "$patchfile" pipe2 & tar -x --directory="$dir2" . < pipe2
 else
 	# rdiff
 	xz -kd "$patchfile" --stdout > pipe2ar & rdiff patch "$intermediate1" pipe2ar pipe2 & tar -xf pipe2 --directory="$dir2" . || exit 2

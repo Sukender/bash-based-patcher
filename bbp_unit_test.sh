@@ -110,8 +110,8 @@ testSimple() {
 	testSimple_Setup
 
 	# Operate
-	"$diffTool" -D "$1" "1" "2" -p delta.patch       # Build
-	"$patchTool" -D "$1" "1" -p delta.patch "2_"    # Apply
+	"$diffTool" -D "$1" "1" "2" -p delta.patch          # Build
+	"$patchTool" -D "$1" "1" -p delta.patch -o "2_"     # Apply
 	rm delta.patch
 
 	# Test
@@ -142,8 +142,8 @@ testFromArchive() {
 	#rm -r "1"         # Remove original "1"
 
 	# Operate
-	"$diffTool" -D "$1" "$2" "$3"      # Build
-	"$patchTool" -D "$1" "$4" "2_"     # Apply
+	"$diffTool" -D "$1" "$2" "$3"        # Build
+	"$patchTool" -D "$1" "$4" -o "2_"    # Apply
 
 	# Test
 	testSimple_Test    # As the previous test
@@ -173,8 +173,8 @@ testSubdir_noLabel() {
 	cd - > /dev/null
 
 	# Operate
-	"$diffTool" "$baseDir/1" "$baseDir/2"      # Build
-	"$patchTool" "$baseDir/1" "$baseDir/2_"    # Apply
+	"$diffTool" "$baseDir/1" "$baseDir/2"         # Build
+	"$patchTool" "$baseDir/1" -o "$baseDir/2_"    # Apply
 
 	# Test
 	cd "$baseDir"
