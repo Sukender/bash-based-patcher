@@ -144,6 +144,8 @@ testFromArchive() {
 	# Operate
 	"$diffTool" -D "$1" "$2" "$3"        # Build
 	"$patchTool" -D "$1" "$4" -o "2_"    # Apply
+	local patchfile="$(autoPatchName "$2" "$3")"
+	rm "$patchfile"
 
 	# Test
 	testSimple_Test    # As the previous test
@@ -175,6 +177,8 @@ testSubdir_noLabel() {
 	# Operate
 	"$diffTool" "$baseDir/1" "$baseDir/2"         # Build
 	"$patchTool" "$baseDir/1" -o "$baseDir/2_"    # Apply
+	local patchfile="$(autoPatchName "$baseDir/1" "$baseDir/2")"
+	rm "$patchfile"
 
 	# Test
 	cd "$baseDir"
