@@ -12,6 +12,7 @@ install: all
 	cp bbpdiff $(INSTALL_PATH)
 	cp bbppatch $(INSTALL_PATH)
 	cp bbpar $(INSTALL_PATH)
+	cp bbpinfo $(INSTALL_PATH)
 	cp bbp_config.sh $(INSTALL_PATH)
 
 uninstall:
@@ -19,6 +20,7 @@ uninstall:
 	-rm -f $(INSTALL_PATH)/bbpdiff
 	-rm -f $(INSTALL_PATH)/bbppatch
 	-rm -f $(INSTALL_PATH)/bbpar
+	-rm -f $(INSTALL_PATH)/bbinfo
 	-rm -f $(INSTALL_PATH)/bbp_config.sh
 
 clean:
@@ -29,7 +31,7 @@ clean:
 # For now, installation happens with Makefile, hence the inclusion of it in the package
 package: all
 	-rm -f "$$toolName.tar.xz"
-	source "./bbp_config.sh" && tar -Jcf "$$toolName.tar.xz" bbp bbpdiff bbppatch bbpar bbp_config.sh bbp_unit_test.sh COPYING.txt README.md Makefile
+	source "./bbp_config.sh" && tar -Jcf "$$toolName.tar.xz" bbp bbpdiff bbppatch bbpar bbpinfo bbp_config.sh bbp_unit_test.sh COPYING.txt README.md Makefile
 
 test: all
 	./bbp_unit_test.sh
