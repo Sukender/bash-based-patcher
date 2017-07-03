@@ -74,6 +74,9 @@ case "$1" in
 	--version)
 		shift; echo "$toolVersion"; exit 0;
 		;;
+	-[0-9])
+		xzOpt "$1"; shift;
+		;;
 	-p|--patch)
 		shift; patchfile="$1"; shift;
 		;;
@@ -111,6 +114,7 @@ if (( $verbosity >= 2 )); then
 	echo "Generating patch from '$dir1' to '$dir2'"
 	echo "Output patch file: $patchfile"
 	echo "Delta tool: $delta"
+	echo "XZ options: $XZ_OPT"
 fi
 
 # --------------------------------------------------------------------------------

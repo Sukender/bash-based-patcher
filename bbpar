@@ -37,11 +37,13 @@ usage() {
 	echo "      Displays all documentation available and exits."
 	echo "  --version"
 	echo "      Displays a short (parsable) version information and exits."
-	# echo "  -v, --verbose"
-	# echo "      Adds a level of verbosity (more information). Default level = $defaultVerbosity."
-	# echo "  -q, --quiet"
-	# echo "      Removes a level of verbosity (more information). Default level = $defaultVerbosity."
-	# echo "      Please note that even level 0 is not absolutely quiet."
+	echo "  -v, --verbose"
+	echo "      Adds a level of verbosity (more information). Default level = $defaultVerbosity."
+	echo "  -q, --quiet"
+	echo "      Removes a level of verbosity (more information). Default level = $defaultVerbosity."
+	echo "      Please note that even level 0 is not absolutely quiet."
+	echo "  -0 to -9"
+	echo "      Sets the XZ compression level (default: 9)"
 	echo "  --"
 	echo "      Do not interpret any more arguments as options."
 	echo
@@ -65,6 +67,9 @@ case "$1" in
 	--version)
 		shift; echo "$toolVersion"; exit 0;
 		;;
+	-[0-9])
+		xzOpt "$1"; shift;
+		;;
 	--)
 		shift;
 		break;
@@ -80,6 +85,15 @@ done
 # --------------------------------------------------------------------------------
 
 archive="$(basename "$dir1")$archiveSuffix"
+
+if (( $verbosity >= 2 )); then
+	echo "$toolName"
+	echo $separatorDisplay
+	echo ""
+	echo "Archiving '$dir1'"
+	echo "Output archive file: $archive"
+	echo "XZ options: $XZ_OPT"
+fi
 
 rm "$archive" 2> /dev/null
 if (( $verbosity >= 1 )); then

@@ -52,12 +52,11 @@ Stuff that should be done:
   - "Small changes" has to be clearly defined.
   - The goal is to allow both sides (maintainer & users) to tweak some files (say, config files), and still make the patch work properly.
   - Allowed changes may be somewhat hard-coded. Ex : a list of files that must be completely included in the patch when changed, even if a portion of them would suffice to describe differences.
-- Allow exclusions, to "skip" paths (files or directories), as if they were removed from the source ('old'). This would allow patching a **part** of a directory.
+- Allow exclusions, to "skip" paths (files or directories), as if they were removed from the base ('old'). This would allow patching a **part** of a directory.
   - Open question: how can we be sure to get the same filter when applying the patch?
 
 ### Maybe to-do
 Nice ideas that may require too much amount of work regarding to the usefulness of the feature:
-- [```bbpdiff```, ```bbpar```] Allow tweaking compression & delta parameters, to allow faster operations.
 - Add support for custom archives (anything, not just ".tar.something") as base directory (both for diff and patch).
   - This may imply issues in creating proper diffs.
 - Handling the initial release (such as a patch from "nothing" to "something"), especially if upload/download is handled.
@@ -71,7 +70,7 @@ Nice ideas that may require too much amount of work regarding to the usefulness 
 
 ### Won't-do
 What is was not meant for:
-- The toolset is not designed to get cool/beautiful installers. This is only an ugly command line maintaining two directories.
+- The toolset is not designed to get cool/beautiful installers. This is only an ugly command line maintaining two directories. Maybe building a GUI ontop of it would be clever.
 
 ## Author
 - **Sukender** (Benoit NEIL) - sukender at free dot fr

@@ -27,7 +27,17 @@ infoTool="$BBD_HOME/$infoToolName"
 # Other
 archiveExtension=".tar.xz"		# "-J" option of tar is used to select the XZ compressor. Do not change extension without changing tar arguments.
 archiveSuffix=".reference$archiveExtension"
-XZ_OPT="-9 -T0"	# Global compression ratio for .tar.xz, with "auto multithreading"
+
+xzOpt() {
+	local opt="$1"
+	if [[ "$opt" =~ ^[0-9]$ ]]; then opt="-$opt"; fi		# Auto-add hyphen ('-')
+	if [[ ! "$opt" =~ ^\-[0-9]$ ]]; then
+		echo "Illegal XZ compression level. Ignoring."
+		return
+	fi
+	export XZ_OPT="$opt -T0"		# Global compression ratio for .tar.xz, with "auto multithreading"
+}
+xzOpt 9
 
 # --------------------------------------------------------------------------------
 # Documentation
