@@ -162,7 +162,6 @@ if (( $verbosity >= 2 )); then
 	echo "Applying patch on '$dir1', to '$dir2'"
 	echo "Local fatch file: $patchfile"
 	echo "Patch URL to retreive: $patchUrl"
-	echo "Delta tool: $delta"
 fi
 
 # --------------------------------------------------------------------------------
