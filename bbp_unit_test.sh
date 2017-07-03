@@ -38,25 +38,25 @@ testLabel() {
 testLabel "Utility functions"
 
 res="$(autoPatchName "subdir" "subdir2/")"		# One with trailing slash, one without
-if [ "$res" != "Patch 'subdir' to 'subdir2'.xz" ]; then err_report $LINENO; fi
+if [ "$res" != "Patch_(subdir)_to_(subdir2).xz" ]; then err_report $LINENO; fi
 
 res="$(autoPatchName "some dir/some subdir" "some dir2/some subdir2/")"		# One with trailing slash, one without
-if [ "$res" != "Patch 'some subdir' to 'some subdir2'.xz" ]; then err_report $LINENO; fi
+if [ "$res" != "Patch_(some subdir)_to_(some subdir2).xz" ]; then err_report $LINENO; fi
 
 res="$(autoPatchName "some dir/some subdir$archiveSuffix" "some dir2/some subdir2$archiveSuffix")"
-if [ "$res" != "Patch 'some subdir' to 'some subdir2'.xz" ]; then err_report $LINENO; fi
+if [ "$res" != "Patch_(some subdir)_to_(some subdir2).xz" ]; then err_report $LINENO; fi
 
 res="$(extractNewName "some dir/some patch")"
 if [ -n "$res" ]; then err_report $LINENO; fi
 
-res="$(extractNewName "Patch 'old name' to 'new name'.xz")"
+res="$(extractNewName "Patch_(old name)_to_(new name).xz")"
 if [ "$res" != "new name" ]; then err_report $LINENO; fi
 
-res="$(extractNewName "./Patch 'old name' to 'new name'.xz")"
+res="$(extractNewName "./Patch_(old name)_to_(new name).xz")"
 if [ "$res" != "new name" ]; then err_report $LINENO; fi
 
-res="$(extractNewName "some dir/Patch 'old name' to 'new name (a.b)'.xz")"
-if [ "$res" != "new name (a.b)" ]; then err_report $LINENO; fi
+res="$(extractNewName "some dir/Patch_(_to_(old name)_to_(new @name (a.b)).xz")"
+if [ "$res" != "new @name (a.b)" ]; then err_report $LINENO; fi
 
 # --------------------------------------------------------------------------------
 # Test - Simple patch creation/application

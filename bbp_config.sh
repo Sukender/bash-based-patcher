@@ -200,27 +200,24 @@ autoPatchName() {
 	local b2="${2%$archiveSuffix}"		# Remove suffix
 	local b1="$(basename "$b1")"
 	local b2="$(basename "$b2")"
-	echo "Patch '$b1' to '$b2'.xz"
+	echo "Patch_($b1)_to_($b2).xz"
 }
 
 # Prints the first patch search expression
 autoPatchSearch1() {
 	local b1="${1%$archiveSuffix}"		# Remove suffix
 	local b1="$(basename "$b1")"
-	echo "Patch '$b1' to '*'.xz"
+	echo "Patch_($b1)_to_(*).xz"
 }
 
 # Prints the second patch search expression
 # autoPatchSearch2() {
-	# local b1="${1%$archiveSuffix}"		# Remove suffix
-	# local b1="$(basename "$b1")"
-	# echo "Patch '$b1*' to '*'.xz"
 # }
 
 # Extract 'dir2' part (= 'new') from an explicit patch name.
 extractNewName() {
 	local b1="$(basename "$1")"
-	if [[ "$b1" =~ ^Patch\ \'(.*)\'\ to\ \'(.*)\'\.xz$ ]]; then
+	if [[ "$b1" =~ ^Patch_\((.*)\)_to_\((.*)\)\.xz$ ]]; then
 		echo "$(basename "${BASH_REMATCH[2]}")"
 	else
 		echo ""
