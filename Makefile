@@ -6,6 +6,7 @@
 INSTALL_PATH=/usr/local/bin
 
 all:
+	chmod +x bbp bbpdiff bbppatch bbpinfo bbpar
 
 install: all
 	cp bbp $(INSTALL_PATH)
@@ -14,6 +15,7 @@ install: all
 	cp bbpar $(INSTALL_PATH)
 	cp bbpinfo $(INSTALL_PATH)
 	cp bbp_config.sh $(INSTALL_PATH)
+	chmod +x "$(INSTALL_PATH)/bbp" "$(INSTALL_PATH)/bbpdiff" "$(INSTALL_PATH)/bbppatch" "$(INSTALL_PATH)/bbpinfo" "$(INSTALL_PATH)/bbpar"
 
 uninstall:
 	-rm -f $(INSTALL_PATH)/bbp
