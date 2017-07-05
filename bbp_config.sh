@@ -5,7 +5,7 @@
 
 # --------------------------------------------------------------------------------
 # Constants
-toolVersion="0.5"
+toolVersion="0.6"
 toolNameUnversionned="Sukender's Bash-Based Patcher (BBP)"
 toolName="$toolNameUnversionned v$toolVersion"
 separatorDisplay="--------------------------------------------------------------------------------"
