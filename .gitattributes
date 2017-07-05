@@ -1,0 +1,7 @@
+# Ensure all SH files use LF.
+*.sh        eol=lf
+bbp         eol=lf
+bbpdiff     eol=lf
+bbppatch    eol=lf
+bbpar       eol=lf
+bbpinfo     eol=lf
