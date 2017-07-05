@@ -98,14 +98,14 @@ fi
 rm "$archive" 2> /dev/null
 if (( $verbosity >= 1 )); then
 	if (( $has_pv != 0 )); then
-		tar -Jcf - --directory="$dir1" . | pv -N "Archive" > "$archive"
+		$tarDir -Jf - --directory="$dir1" . | pv -N "Archive" > "$archive"
 		res=${PIPESTATUS[0]}
 	else
-		tar -acf "$archive" --directory="$dir1" . --checkpoint=.10
+		$tarDir -Jf "$archive" --directory="$dir1" . --checkpoint=.10
 		res="$?"
 	fi
 else
-	tar -acf "$archive" --directory="$dir1" .
+	$tarDir -Jf "$archive" --directory="$dir1" .
 	res="$?"
 fi
 
