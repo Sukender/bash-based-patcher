@@ -142,8 +142,7 @@ if [ ! -n "$patchUrl" ]; then
 else
 	# Auto patch naming for distant retreival
 	if [ ! -n "$patchfile" ]; then
-		dlBaseName="$(basename ${patchUrl})"
-		patchfile="$(printf '%b' ${dlBaseName//%/\\x})"
+		patchfile="$(extractUrlName "${patchUrl}")"
 	fi
 	if [ ! -n "$patchfile" ]; then
 		patchfile="$defaultpatchfile"
