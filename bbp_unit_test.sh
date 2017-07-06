@@ -19,6 +19,7 @@ baseDir="_diff_unit_test"
 #set -e
 err_report() {
 	echo "Error on line $1"
+	if [ -n "$2" ]; then echo "Result: $2"; fi
 	cd "$DIR"
 	rm -r "$baseDir" 2> /dev/null
 	exit 1
@@ -39,30 +40,36 @@ testLabel "Utility functions"
 # *** Patch name generation and parsing ***
 
 res="$(autoPatchName "subdir" "subdir2/")"		# One with trailing slash, one without
-if [ "$res" != "Patch_(subdir)_to_(subdir2).xz" ]; then err_report $LINENO; fi
+if [ "$res" != "Patch_(subdir)_to_(subdir2).xz" ]; then err_report $LINENO "$res"; fi
 
 res="$(autoPatchName "some dir/some subdir" "some dir2/some subdir2/")"		# One with trailing slash, one without
-if [ "$res" != "Patch_(some subdir)_to_(some subdir2).xz" ]; then err_report $LINENO; fi
+if [ "$res" != "Patch_(some subdir)_to_(some subdir2).xz" ]; then err_report $LINENO "$res"; fi
 
 res="$(autoPatchName "some dir/some subdir$archiveSuffix" "some dir2/some subdir2$archiveSuffix")"
-if [ "$res" != "Patch_(some subdir)_to_(some subdir2).xz" ]; then err_report $LINENO; fi
+if [ "$res" != "Patch_(some subdir)_to_(some subdir2).xz" ]; then err_report $LINENO "$res"; fi
 
 res="$(extractNewName "some dir/some patch")"
-if [ -n "$res" ]; then err_report $LINENO; fi
+if [ -n "$res" ]; then err_report $LINENO "$res"; fi
 
 res="$(extractNewName "Patch_(old name)_to_(new name).xz")"
-if [ "$res" != "new name" ]; then err_report $LINENO; fi
+if [ "$res" != "new name" ]; then err_report $LINENO "$res"; fi
 
 res="$(extractNewName "./Patch_(old name)_to_(new name).xz")"
-if [ "$res" != "new name" ]; then err_report $LINENO; fi
+if [ "$res" != "new name" ]; then err_report $LINENO "$res"; fi
 
 res="$(extractNewName "some dir/Patch_(_to_(old name)_to_(new @name (a.b)).xz")"
-if [ "$res" != "new @name (a.b)" ]; then err_report $LINENO; fi
+if [ "$res" != "new @name (a.b)" ]; then err_report $LINENO "$res"; fi
+
+res="$(extractUrlName "http://some.server.com/some/dir/some cool patch.xz")"
+if [ "$res" != "some cool patch.xz" ]; then err_report $LINENO "$res"; fi
+
+res="$(extractUrlName "dummy://dummy/dummy/ab%20c+%28d+ef%29%21")"
+if [ "$res" != "ab c (d ef)!" ]; then err_report $LINENO "$res"; fi
 
 # *** bbpinfo ***
 
 res="$("$infoTool" "dummyName")"
-if [[ ! "$res" =~ ^UNKNOWN ]]; then err_report $LINENO; fi
+if [[ ! "$res" =~ ^UNKNOWN ]]; then err_report $LINENO "$res"; fi
 
 # --------------------------------------------------------------------------------
 # Test - Simple patch creation/application

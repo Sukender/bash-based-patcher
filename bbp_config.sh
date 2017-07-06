@@ -252,6 +252,15 @@ extractNewName() {
 	fi
 }
 
+# Extracts base name of a file from an URL (for download), interpreting escaped characters.
+extractUrlName() {
+	local dlBaseName="$(basename "$1")"
+	dlBaseName="$(printf '%b' "${dlBaseName//%/\\x}")"
+	dlBaseName="$(echo "$dlBaseName" | sed "s/+/ /g")"
+	#dlBaseName="$(echo "$dlBaseName" | awk 'gsub( "+"," " )')"
+	echo "$dlBaseName"
+}
+
 # --------------------------------------------------------------------------------
 # Default-initialized variables
 verbosity="$defaultVerbosity"
