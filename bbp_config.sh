@@ -261,6 +261,13 @@ extractUrlName() {
 	echo "$dlBaseName"
 }
 
+# Extracts base name of an archive
+directoryNameFromArchive() {
+	local res="${1%$archiveSuffix}"		# Remove suffix
+	res="${res%$archiveExtension}"		# Remove suffix if no ".reference"
+	echo "$(basename "$res")"			# Remove dirs
+}
+
 # --------------------------------------------------------------------------------
 # Default-initialized variables
 verbosity="$defaultVerbosity"

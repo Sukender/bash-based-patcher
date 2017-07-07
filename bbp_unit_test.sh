@@ -72,6 +72,33 @@ res="$("$infoTool" "dummyName")"
 if [[ ! "$res" =~ ^UNKNOWN ]]; then err_report $LINENO "$res"; fi
 
 # --------------------------------------------------------------------------------
+# Test - Archive
+
+testLabel "Archiving"
+
+# Clear
+rm -rf "$baseDir"
+
+# Operate & test
+mkdir -p "$baseDir"
+echo "abcdefghijklmnopq" > "$baseDir/aaa"
+
+"$arTool" "$baseDir"
+rm -rf "$baseDir"
+
+if [ ! -f "$baseDir$archiveSuffix" ]; then err_report $LINENO "$res"; fi
+if [   -d "$baseDir" ]; then err_report $LINENO "$res"; fi
+
+"$arTool" x "$baseDir$archiveSuffix"
+if [ ! -d "$baseDir" ]; then err_report $LINENO "$res"; fi
+if [ ! -f "$baseDir/aaa" ]; then err_report $LINENO "$res"; fi
+read line < "$baseDir/aaa"; if [ "$line" != "abcdefghijklmnopq" ]; then err_report $LINENO; fi
+
+rm -rf "$baseDir" "$baseDir$archiveSuffix"
+
+exit
+
+# --------------------------------------------------------------------------------
 # Test - Simple patch creation/application
 
 testSimple_Setup() {

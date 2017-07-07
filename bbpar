@@ -29,6 +29,7 @@ usage() {
 	echo
 	echo "Syntax:"
 	echo "  ar [options] directory"
+	echo "  ar x [options] archive"
 	echo
 	echo "Options:"
 	echo "  -h, --help"
@@ -44,11 +45,14 @@ usage() {
 	echo "      Please note that even level 0 is not absolutely quiet."
 	echo "  -0 to -9"
 	echo "      Sets the XZ compression level (default: 9)"
+	echo "  -x (or simply x)"
+	echo "      Extracts instead of archiving."
 	echo "  --"
 	echo "      Do not interpret any more arguments as options."
 	echo
 }
 
+extract=0
 
 while [ "$#" -gt 0 ]; do
 case "$1" in
@@ -70,6 +74,9 @@ case "$1" in
 	-[0-9])
 		xzOpt "$1"; shift;
 		;;
+	x|-x)
+		shift; extract=1
+		;;
 	--)
 		shift;
 		break;
@@ -84,32 +91,73 @@ done
 
 # --------------------------------------------------------------------------------
 
-archive="$(basename "$dir1")$archiveSuffix"
+if (( $extract == 0 )); then
+	archive="$(basename "$dir1")$archiveSuffix"
 
-if (( $verbosity >= 2 )); then
-	echo "$toolName"
-	echo $separatorDisplay
-	echo ""
-	echo "Archiving '$dir1'"
-	echo "Output archive file: $archive"
-	echo "XZ options: $XZ_OPT"
-fi
+	if (( $verbosity >= 2 )); then
+		echo "$toolName"
+		echo $separatorDisplay
+		echo ""
+		echo "Archiving '$dir1'"
+		echo "Output archive file: $archive"
+		echo "XZ options: $XZ_OPT"
+	fi
 
-rm "$archive" 2> /dev/null
-if (( $verbosity >= 1 )); then
-	if (( $has_pv != 0 )); then
-		$tarDir -Jf - --directory="$dir1" . | pv -N "Archive" > "$archive"
-		res=${PIPESTATUS[0]}
+	rm "$archive" 2> /dev/null
+	if (( $verbosity >= 1 )); then
+		if (( $has_pv != 0 )); then
+			$tarDir -Jf - --directory="$dir1" . | pv -N "Archive" > "$archive"
+			res=${PIPESTATUS[0]}
+		else
+			$tarDir -Jf "$archive" --directory="$dir1" . --checkpoint=.10
+			res="$?"
+		fi
 	else
-		$tarDir -Jf "$archive" --directory="$dir1" . --checkpoint=.10
+		$tarDir -Jf "$archive" --directory="$dir1" .
 		res="$?"
 	fi
+
+	if (( $verbosity >= 1 )); then
+		if (( $res == 0 )); then echo "Created '$archive'."; fi
+	fi
 else
-	$tarDir -Jf "$archive" --directory="$dir1" .
+	archive="$dir1"
+	dir1="$(directoryNameFromArchive "$archive")"
+
+	if (( $verbosity >= 2 )); then
+		echo "$toolName"
+		echo $separatorDisplay
+		echo ""
+		echo "Extracting '$archive'"
+		echo "Output directory: $dir1"
+	fi
+	if [ ! -f "$archive" ]; then
+		echo "'$archive' is not a valid file."
+		exit 1
+	fi
+	if [ -d "$dir1" ]; then
+		echo "'$dir1' already exists! Please remove or rename it, or extract somewhere else."
+		exit 1
+	fi
+
+	mkdir "$dir1"
+	if (( $? != 0 )); then
+		echo "Could not create '$dir1'."
+		exit 2
+	fi
+
+	if (( $verbosity >= 1 )); then
+		if (( $has_pv != 0 )); then
+			pv "$archive" | tar Jxf - --directory="$dir1"
+		else
+			tar xvf "$archive" --directory="$dir1"
+		fi
+	else
+		tar xf "$archive" --directory="$dir1"
+	fi
 	res="$?"
 fi
 
-if (( $verbosity >= 1 )); then
-	if [[ "$res" == "0" ]]; then echo "Created '$archive'."; fi
+if (( $res != 0 )); then
+	exit 2
 fi
-exit "$res"
