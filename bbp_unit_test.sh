@@ -96,8 +96,6 @@ read line < "$baseDir/aaa"; if [ "$line" != "abcdefghijklmnopq" ]; then err_repo
 
 rm -rf "$baseDir" "$baseDir$archiveSuffix"
 
-exit
-
 # --------------------------------------------------------------------------------
 # Test - Simple patch creation/application
 
