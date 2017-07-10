@@ -89,9 +89,19 @@ case "$1" in
 esac
 done
 
+if [ ! -n "$dir1" ]; then
+	usage
+	exit 1
+fi
+
 # --------------------------------------------------------------------------------
 
 if (( $extract == 0 )); then
+	if [ ! -d "$dir1" ]; then
+		echo "'$dir1' isn't a directory."
+		exit 1
+	fi
+
 	archive="$(basename "$dir1")$archiveSuffix"
 
 	if (( $verbosity >= 2 )); then
