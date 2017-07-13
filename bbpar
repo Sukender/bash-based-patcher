@@ -26,6 +26,7 @@ usage() {
 	echo "$toolName"
 	echo "Creates an archive useable by diff/patch as a base directory."
 	echo "Output is located in the working directory, with a standardized name."
+	echo "Can also extract those archives (and some others) using 'x' (as with tar)."
 	echo
 	echo "Syntax:"
 	echo "  ar [options] directory"
@@ -41,7 +42,7 @@ usage() {
 	echo "  -v, --verbose"
 	echo "      Adds a level of verbosity (more information). Default level = $defaultVerbosity."
 	echo "  -q, --quiet"
-	echo "      Removes a level of verbosity (more information). Default level = $defaultVerbosity."
+	echo "      Removes a level of verbosity (less information). Default level = $defaultVerbosity."
 	echo "      Please note that even level 0 is not absolutely quiet."
 	echo "  -0 to -9"
 	echo "      Sets the XZ compression level (default: 9)"
@@ -97,6 +98,8 @@ fi
 # --------------------------------------------------------------------------------
 
 if (( $extract == 0 )); then
+	# Archiving
+
 	if [ ! -d "$dir1" ]; then
 		echo "'$dir1' isn't a directory."
 		exit 1
@@ -131,6 +134,9 @@ if (( $extract == 0 )); then
 		if (( $res == 0 )); then echo "Created '$archive'."; fi
 	fi
 else
+	# Extracting
+
+	# Swap arguments (semantics)
 	archive="$dir1"
 	dir1="$(directoryNameFromArchive "$archive")"
 

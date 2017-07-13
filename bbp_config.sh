@@ -12,22 +12,25 @@ separatorDisplay="--------------------------------------------------------------
 defaultpatchfile="patch.xz"
 if [ -z "$defaultVerbosity" ]; then defaultVerbosity=1; fi
 
-BBD_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
+BBP_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
 
 # Tools names
 diffToolName="bbpdiff"
-diffTool="$BBD_HOME/$diffToolName"
+diffTool="$BBP_HOME/$diffToolName"
 patchToolName="bbppatch"
-patchTool="$BBD_HOME/$patchToolName"
+patchTool="$BBP_HOME/$patchToolName"
 arToolName="bbpar"
-arTool="$BBD_HOME/$arToolName"
+arTool="$BBP_HOME/$arToolName"
 infoToolName="bbpinfo"
-infoTool="$BBD_HOME/$infoToolName"
+infoTool="$BBP_HOME/$infoToolName"
 
 # Other
 archiveExtension=".tar.xz"		# "-J" option of tar is used to select the XZ compressor. Do not change extension without changing tar arguments.
 archiveSuffix=".reference$archiveExtension"
 
+# Sets the global environment variable XZ_OPT, given a compression level.
+# This adds other options (here, "-T0") to XZ_OPT.
+# Example: "xzOpt 9", or "xzOpt -9"
 xzOpt() {
 	local opt="$1"
 	if [[ "$opt" =~ ^[0-9]$ ]]; then opt="-$opt"; fi		# Auto-add hyphen ('-')
@@ -100,6 +103,7 @@ displayDoc() {
 # --------------------------------------------------------------------------------
 # Delta tools availability
 
+# Tests if command $1 exists (built-in or in path), and set the global variable "has_$1" to 0 or 1.
 evalHas() {
 	which "$1" > /dev/null 2> /dev/null
 	if [[ "$?" == 0 ]]; then
@@ -109,6 +113,7 @@ evalHas() {
 	fi
 }
 
+# Tests if command $1 exists (built-in or in path), and exits after displaying a message with $2 if not.
 # assertHas command packageNameInfo
 assertHas() {
 	which "$1" > /dev/null 2> /dev/null

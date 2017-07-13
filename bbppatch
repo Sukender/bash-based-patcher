@@ -48,7 +48,7 @@ usage() {
 	echo "  -v, --verbose"
 	echo "      Adds a level of verbosity (more information). Default level = $defaultVerbosity."
 	echo "  -q, --quiet"
-	echo "      Removes a level of verbosity (more information). Default level = $defaultVerbosity."
+	echo "      Removes a level of verbosity (less information). Default level = $defaultVerbosity."
 	echo "      Please note that even level 0 is not absolutely quiet."
 	echo "  --"
 	echo "      Do not interpret any more arguments as options."
