@@ -164,11 +164,11 @@ else
 
 	export XZ_OPT=""	# Override options. Compresison level and '-T0' (multithreading) are useless here.
 	if (( $verbosity >= 1 )); then
-		if (( $has_pv != 0 )); then
-			pv "$archive" | tar Jxf - --directory="$dir1"
-		else
+		#if (( $has_pv != 0 )); then
+		#	pv "$archive" | tar Jxf - --directory="$dir1"		# Sometimes fails! Don't know why!!
+		#else
 			tar xvf "$archive" --directory="$dir1"
-		fi
+		#fi
 	else
 		tar xf "$archive" --directory="$dir1"
 	fi
