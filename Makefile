@@ -3,6 +3,7 @@
 #   Install config file elsewhere (share?)
 #   "INSTALL_PATH" should be configurable
 
+SHELL:=/bin/bash
 INSTALL_PATH=/usr/local/bin
 
 all:

@@ -38,7 +38,8 @@ xzOpt() {
 		echo "Illegal XZ compression level. Ignoring."
 		return
 	fi
-	export XZ_OPT="$opt -T0"		# Global compression ratio for .tar.xz, with "auto multithreading"
+	#export XZ_OPT="$opt -T0"		# Global compression ratio for .tar.xz, with "auto multithreading"
+	export XZ_OPT="$opt"		# Global compression ratio for .tar.xz, single threaded. Some archives created with -T0 generate errors (unknown reason) under Cygwin / xz v5.2.3
 }
 xzOpt 9
 
