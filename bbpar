@@ -122,7 +122,7 @@ if (( $extract == 0 )); then
 		if (( $has_pv != 0 )); then
 			$tarDir -f - --directory="$dir1" . | pv -N "Archive" -s $size | xz > "$archive"
 		else
-			$tarDir -Jf "$archive" --directory="$dir1" . --checkpoint=.10
+			$tarDir -Jf "$archive" --directory="$dir1" . --checkpoint=.100
 			echo ""
 		fi
 	else
