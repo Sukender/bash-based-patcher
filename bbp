@@ -24,6 +24,12 @@ if [ "$1" == "ar" ]; then
 	"$arTool" "$@"
 	exit $?
 fi
+if [ "$1" == "info" ]; then
+	shift
+	"$infoTool" "$@"
+	exit $?
+fi
+
 if [ "$1" == "--version" ]; then
 	echo "$toolVersion"
 	exit 0
@@ -36,7 +42,7 @@ echo "Tools to patch directories."
 echo ""
 echo "Syntax:"
 echo "  bbp tool [tools_arguments]"
-echo "  Where tool is one of: diff, patch, ar"
+echo "  Where tool is one of: diff, patch, ar, info"
 echo ""
 echo "For more information type:"
 echo "   bbp tool --help"
