@@ -12,19 +12,21 @@
 #initDir="$PWD"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
 source "$DIR/bbp_config.sh" || exit 4
+
 export defaultVerbosity=0		# Globally change verbosity
+#set -x  # Debug bash
+#set +e  # Continue on error
 
 baseDir="_diff_unit_test"
 
-#set -e
 err_report() {
-	echo "Error on line $1"
-	if [ -n "$2" ]; then echo "Result: $2"; fi
+	echo "Error on line ${1}"
+	if [ -n "${2:-}" ]; then echo "Result: $2"; fi
 	cd "$DIR"
-	rm -r "$baseDir" 2> /dev/null
+	rm -r "$baseDir" 2> /dev/null || true
 	exit 1
 }
-trap 'err_report $LINENO' ERR
+trap 'err_report ${LINENO}' ERR
 
 testLabel() {
 	#if (( $verbosity >= 1 )); then

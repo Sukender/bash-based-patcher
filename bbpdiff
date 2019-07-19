@@ -11,10 +11,10 @@ source "$DIR/bbp_config.sh" || exit 4
 # Parameters parsing and usage
 
 positionalOption() {
-	if [ -z "$dir1" ]; then
+	if [ -z "${dir1:-}" ]; then
 		dir1="$1"
 	else
-		if [ -z "$dir2" ]; then
+		if [ -z "${dir2:-}" ]; then
 			dir2="$1"
 		else
 			echo "Unrecognized option: $1"
@@ -95,12 +95,12 @@ case "$1" in
 esac
 done
 
-if [ -z "$dir1" ] || [ -z "$dir2" ]; then
+if [ -z "${dir1:-}" ] || [ -z "${dir2:-}" ]; then
 	usage;
 	exit 1;
 fi
 
-chooseDelta "$deltaChoice"
+chooseDelta "${deltaChoice:-}"
 
 if [ ! -n "$patchfile" ]; then
 	# Auto patch naming
@@ -126,7 +126,7 @@ if (( $verbosity >= 1 )); then
 	echo ""
 fi
 
-rm pipe1 pipe2 "$patchfile" 2> /dev/null
+rm pipe1 pipe2 "$patchfile" 2> /dev/null || true
 mkfifo pipe1 pipe2 || exit 2
 
 readBase "$dir1" pipe1		# Handles dir1 as an archive or dir
@@ -147,7 +147,7 @@ if [ "$delta" == "xdelta3" ]; then
 else
 	# rdiff
 
-	rm pipe1sig 2> /dev/null
+	rm pipe1sig 2> /dev/null || true
 	mkfifo pipe1sig || exit 2
 	#$tarDir --directory="$dir1" . > pipe1 &
 	if (( $verbosity >= 1 )) && (( $has_pv != 0 )); then

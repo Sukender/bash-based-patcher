@@ -5,12 +5,12 @@
 
 # --------------------------------------------------------------------------------
 # Constants
-toolVersion="0.6.1"
+toolVersion="0.6.2"
 toolNameUnversionned="Sukender's Bash-Based Patcher (BBP)"
 toolName="$toolNameUnversionned v$toolVersion"
 separatorDisplay="--------------------------------------------------------------------------------"
 defaultpatchfile="patch.xz"
-if [ -z "$defaultVerbosity" ]; then defaultVerbosity=1; fi
+if [ -z "${defaultVerbosity:-}" ]; then defaultVerbosity=1; fi
 
 BBP_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
 
@@ -42,6 +42,8 @@ xzOpt() {
 	export XZ_OPT="$opt"		# Global compression ratio for .tar.xz, single threaded. Some archives created with -T0 generate errors (unknown reason) under Cygwin / xz v5.2.3
 }
 xzOpt 9
+
+set -euo pipefail
 
 # --------------------------------------------------------------------------------
 # Documentation
@@ -106,7 +108,7 @@ displayDoc() {
 
 # Tests if command $1 exists (built-in or in path), and set the global variable "has_$1" to 0 or 1.
 evalHas() {
-	which "$1" > /dev/null 2> /dev/null
+	which "$1" > /dev/null 2> /dev/null || true
 	if [[ "$?" == 0 ]]; then
 		eval "has_$1=1"
 	else
@@ -117,7 +119,7 @@ evalHas() {
 # Tests if command $1 exists (built-in or in path), and exits after displaying a message with $2 if not.
 # assertHas command packageNameInfo
 assertHas() {
-	which "$1" > /dev/null 2> /dev/null
+	which "$1" > /dev/null 2> /dev/null || true
 	if [[ "$?" != 0 ]]; then
 		echo "Missing: '$1' seems not installed and in your path. Please install (the package you need is probably '$2')."
 		exit 5
@@ -147,12 +149,14 @@ chooseDelta_explicit() {
 
 chooseDelta() {
 	# Honor explicit choices if possible
-	chooseDelta_explicit "$1" "rdiff"
-	if [ -n "$delta" ]; then return; fi
-	chooseDelta_explicit "$1" "xdelta3"
-	if [ -n "$delta" ]; then return; fi
-	#if [ "$1" == "xdelta"  ] && [[ "$has_xdelta3" != "0" ]]; then delta="xdelta3"; return; fi		# Alias
-	#if [ -n "$delta" ]; then return; fi
+	if [ -n "${1:-}" ]; then
+		chooseDelta_explicit "$1" "rdiff"
+		if [ -n "${delta:-}" ]; then return; fi
+		chooseDelta_explicit "$1" "xdelta3"
+		if [ -n "${delta:-}" ]; then return; fi
+		#if [ "$1" == "xdelta"  ] && [[ "$has_xdelta3" != "0" ]]; then delta="xdelta3"; return; fi		# Alias
+		#if [ -n "${delta:-}" ]; then return; fi
+	fi
 
 	# Default choice
 	if [[ "$has_xdelta3" != "0" ]]; then delta="xdelta3"; return; fi
@@ -165,7 +169,7 @@ chooseDelta() {
 autoDetectedDelta() {
 	local d="$("$infoTool" "$1")"
 	chooseDelta_explicit "$d" "$d"
-	if [ -n "$delta" ]; then return; fi
+	if [ -n "${delta:-}" ]; then return; fi
 
 	echo "Error: your need either rdiff or xdelta3 installed and in your path. Please install."
 	exit 1
@@ -191,27 +195,30 @@ tarDir="tar -c --sort=name --no-auto-compress"
 
 # readBase dir1 outFile useSubshell
 readBase_sub() {
-	if [ -f "$1" ]; then
+	local dir="$1"
+	local outFile="$2"
+	local useSubshell="$3"
+	if [ -f "$dir" ]; then
 		# Archive (file) mode
-		if [[ "$1" != *$archiveExtension ]]; then
-			echo "\"$1\" ('new') is a file, but it is not a valid archive (named '*$archiveExtension')!"
+		if [[ "$dir" != *$archiveExtension ]]; then
+			echo "\"$dir\" ('new') is a file, but it is not a valid archive (named '*$archiveExtension')!"
 			exit 1
 		fi
 		if [[ "$useSubshell" != 0 ]]; then
-			xz -kd "$1" --stdout > "$2" &
+			xz -kd "$dir" --stdout > "$outFile" &
 		else
-			xz -kd "$1" --stdout > "$2"
+			xz -kd "$dir" --stdout > "$outFile"
 		fi
 	else
 		# Directory mode
-		if [ ! -d "$1" ]; then
-			echo "\"$1\" ('new') is not a valid directory, nor a valid archive!"
+		if [ ! -d "$dir" ]; then
+			echo "\"$dir\" ('new') is not a valid directory, nor a valid archive!"
 			exit 1
 		fi
 		if [[ "$useSubshell" != 0 ]]; then
-			$tarDir --directory="$1" . > "$2" &
+			$tarDir --directory="$dir" . > "$outFile" &
 		else
-			$tarDir --directory="$1" . > "$2"
+			$tarDir --directory="$dir" . > "$outFile"
 		fi
 	fi
 }
@@ -272,6 +279,12 @@ directoryNameFromArchive() {
 	local res="${1%$archiveSuffix}"		# Remove suffix
 	res="${res%$archiveExtension}"		# Remove suffix if no ".reference"
 	echo "$(basename "$res")"			# Remove dirs
+}
+
+# Writes the size in bytes of the first argument.
+# Example: size=$(getSize "myDirectory")
+getSize() {
+	du -bs "$1" | sed -E 's/^([0-9]+).*/\1/'
 }
 
 # --------------------------------------------------------------------------------

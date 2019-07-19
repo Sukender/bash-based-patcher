@@ -11,7 +11,7 @@ source "$DIR/bbp_config.sh" || exit 4
 # Parameters parsing and usage
 
 positionalOption() {
-	if [ -z "$patchfile" ]; then
+	if [ -z "${patchfile:-}" ]; then
 		patchfile="$1"
 	else
 		echo "Unrecognized option: $1"
@@ -80,14 +80,14 @@ case "$1" in
 esac
 done
 
-if [ -z "$patchfile" ]; then
+if [ -z "${patchfile:-}" ]; then
 	usage;
 	exit 1;
 fi
 
 # --------------------------------------------------------------------------------
 
-# if [ -n "$patchUrl" ]; then
+# if [ -n "${patchUrl:-}" ]; then
 	# if (( $verbosity >= 1 )); then
 		# echo $separatorDisplay
 		# echo "[$(date +%H:%M:%S)] Getting the patch file."

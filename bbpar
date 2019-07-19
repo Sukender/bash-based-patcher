@@ -14,7 +14,7 @@ source "$DIR/bbp_config.sh" || exit 4
 # Parameters parsing and usage
 
 positionalOption() {
-	if [ -z "$dir1" ]; then
+	if [ -z "${dir1:-}" ]; then
 		dir1="$1"
 	else
 		echo "Unrecognized option: $1"
@@ -116,22 +116,17 @@ if (( $extract == 0 )); then
 		echo "XZ options: $XZ_OPT"
 	fi
 
-	rm "$archive" 2> /dev/null
+	rm "$archive" 2> /dev/null || true
 	if (( $verbosity >= 1 )); then
+		size=$(getSize "v2")
 		if (( $has_pv != 0 )); then
-			$tarDir -Jf - --directory="$dir1" . | pv -N "Archive" > "$archive"
-			res=${PIPESTATUS[0]}
+			$tarDir -f - --directory="$dir1" . | pv -N "Archive" -s $size | xz > "$archive"
 		else
 			$tarDir -Jf "$archive" --directory="$dir1" . --checkpoint=.10
-			res="$?"
+			echo ""
 		fi
 	else
 		$tarDir -Jf "$archive" --directory="$dir1" .
-		res="$?"
-	fi
-
-	if (( $verbosity >= 1 )); then
-		if (( $res == 0 )); then echo "Created '$archive'."; fi
 	fi
 else
 	# Extracting
@@ -157,12 +152,8 @@ else
 	fi
 
 	mkdir "$dir1"
-	if (( $? != 0 )); then
-		echo "Could not create '$dir1'."
-		exit 2
-	fi
 
-	export XZ_OPT=""	# Override options. Compresison level and '-T0' (multithreading) are useless here.
+	#export XZ_OPT=""	# Override options. Compresison level and '-T0' (multithreading) are useless here.
 	if (( $verbosity >= 1 )); then
 		#if (( $has_pv != 0 )); then
 		#	pv "$archive" | tar Jxf - --directory="$dir1"		# Sometimes fails! Don't know why!!
@@ -172,9 +163,4 @@ else
 	else
 		tar xf "$archive" --directory="$dir1"
 	fi
-	res="$?"
-fi
-
-if (( $res != 0 )); then
-	exit 2
 fi

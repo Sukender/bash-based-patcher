@@ -46,7 +46,7 @@ bbp patch "oldDir.reference.tar.xz" -p "patch.xz"    # Apply, using a local patc
 Stuff that should be done:
 - [```bbppatch```] Upon failure, cleanup everything: delete or rename patched directory, pipes and temporary downloaded patch.
 - [```bbpdiff```] Handle upload of patches (FTP or such).
-- Better error handling: test all pipe statuses (```${PIPESTATUS[i]}```) and async statuses everywhere, and stop on error.
+- [```bbpar```] Add progress bar for decompression.
 - ```make install``` should have a way to configure install path.
 - Add a resilience towards "small changes" in base directories (maintainer and users).
   - "Small changes" has to be clearly defined.

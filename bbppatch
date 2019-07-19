@@ -13,7 +13,7 @@ intermediate1="1.tar"
 # Parameters parsing and usage
 
 positionalOption() {
-	if [ -z "$dir1" ]; then
+	if [ -z "${dir1:-}" ]; then
 		dir1="$1"
 	else
 		echo "Unrecognized option: $1"
@@ -94,14 +94,14 @@ case "$1" in
 esac
 done
 
-if [ -z "$dir1" ]; then
+if [ -z "${dir1:-}" ]; then
 	usage;
 	exit 1;
 fi
 
 # Handling $patchfile
-if [ ! -n "$patchUrl" ]; then
-	if [ ! -n "$patchfile" ]; then
+if [ ! -n "${patchUrl:-}" ]; then
+	if [ ! -n "${patchfile:-}" ]; then
 		# Auto patch finding (pun not intended!), in local
 		searchExpression="$(autoPatchSearch1 "$dir1")"
 		#searchExpression2="$(autoPatchSearch2 "$dir1")"
@@ -128,7 +128,7 @@ if [ ! -n "$patchUrl" ]; then
 				# exit 1
 			# fi
 		fi
-		if [ ! -n "$patchfile" ]; then
+		if [ ! -n "${patchfile:-}" ]; then
 			if [ ! -f "$defaultpatchfile" ]; then
 				echo "Found no patch. Please specify the patch name."
 				echo "Searched: $defaultpatchfile"
@@ -150,9 +150,9 @@ else
 fi
 
 # Output dir
-if [ -z "$dir2" ]; then
+if [ -z "${dir2:-}" ]; then
 	dir2="$(extractNewName "$patchfile")"
-	if [ -z "$dir2" ]; then
+	if [ -z "${dir2:-}" ]; then
 		dir2="${dir1}_patched"
 	fi
 fi
@@ -169,7 +169,7 @@ fi
 
 # --------------------------------------------------------------------------------
 
-if [ -n "$patchUrl" ]; then
+if [ -n "${patchUrl:-}" ]; then
 	if (( $verbosity >= 1 )); then
 		echo $separatorDisplay
 		echo "[$(date +%H:%M:%S)] Getting the patch file."
@@ -180,10 +180,10 @@ fi
 
 autoDetectedDelta "$patchfile"
 
-rm -r "$dir2" 2> /dev/null
+rm -r "$dir2" 2> /dev/null || true
 mkdir -p "$dir2"
 
-rm pipe1 pipe2 pipe2ar 2> /dev/null
+rm pipe1 pipe2 pipe2ar 2> /dev/null || true
 mkfifo pipe1 pipe2 pipe2ar || exit 2
 
 # (rdiff only) Theorical call would be:
@@ -196,7 +196,7 @@ if [ "$delta" != "xdelta3" ]; then
 		echo "[$(date +%H:%M:%S)] Creating intermediate file before applying patch. This may take a while."
 		echo ""
 	fi
-	rm "$intermediate1" 2> /dev/null
+	rm "$intermediate1" 2> /dev/null || true
 	readBaseSync "$dir1" "$intermediate1"		# Handles dir1 as an archive or dir - Sync reading
 	#tar -cf "$intermediate1" --sort=name --no-auto-compress --directory="$dir1" . || exit 2
 	#$tarDir -f "$intermediate1" pipe1 || exit 2
