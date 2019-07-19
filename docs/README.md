@@ -1,7 +1,9 @@
 # BBP: Sukender's Bash-Based Patcher
 
 ## Description
-Basic and simple toolset to help diff/patch directories.
+Simple diff/patch of directories.
+
+![BBP principle schema](bbp-diff-patch-principle.svg "BBP helps sending small updates")
 
 ### Goals
 - Maintain a (remote) directory up-to-date. The "maintainer" sends updates to "users". This is a kind of mirror (not a backup).
@@ -12,6 +14,7 @@ Basic and simple toolset to help diff/patch directories.
 ## Features
 - Create the smallest possible "patch" (difference) between two directories, and then apply the patch to a directory and get an updated one.
 - Support archives: ```tar.xz``` archives of directories can be used in place of the directories. The ```bbp ar``` command can be used to create compatible archives.
+  - Only one archive type is currently supported. You will not be able to use your previously "zipped" folder unless you extract it.
 - Be "portable". Actually the bash scripts should run on (at least) common *GNU/Linux* distributions (Debian, Ubuntu...) and *Cygwin*.
   - Please note that even if targeted at the *bash* interpreter, this may work with others, or be easily adapted.
 
