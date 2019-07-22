@@ -158,7 +158,7 @@ testSimple() {
 	testSimple_Test
 
 	# Clear
-	cd - > /dev/null
+	cd "$DIR" > /dev/null
 	rm -rf "$baseDir"
 }
 
@@ -191,7 +191,7 @@ testFromArchive() {
 	testSimple_Test    # As the previous test
 
 	# Clear
-	cd - > /dev/null
+	cd "$DIR" > /dev/null
 	rm -rf "$baseDir"
 }
 
@@ -205,6 +205,74 @@ testFromArchive "rdiff"   "1$archiveSuffix" "2" "1"                  # Build fro
 
 testFromArchive "xdelta3" "1$archiveSuffix" "2$archiveSuffix" "1$archiveSuffix"    # Build from archive/archive, apply from archive
 testFromArchive "rdiff"   "1$archiveSuffix" "2$archiveSuffix" "1$archiveSuffix"    # Build from archive/archive, apply from archive
+
+# --------------------------------------------------------------------------------
+# Test - Initial release
+
+testLabel "Empty source"
+
+# Clear
+testSimple_Setup
+
+"$diffTool" "/dev/null" "1"
+rm -rf "1"
+
+"$patchTool" "/dev/null" -p "Patch_(null)_to_(1).xz"
+read line < "1/c.txt"; if [ "$line" != "ccccc" ]; then err_report $LINENO; fi
+
+cd "$DIR" > /dev/null
+rm -rf "$baseDir"
+
+# --------------------------------------------------------------------------------
+# Test - Chained patching workflow
+
+testLabel "Chained patching workflow"
+
+# testSetup NAME
+testSetup() {
+	local name="$1"
+	mkdir -p "$name"
+	head -c 100000 /dev/urandom > "$name/a"
+}
+
+# Clear
+rm -rf "$baseDir"
+
+mkdir -p "$baseDir"
+cd "$baseDir"
+
+testSetup "1"	# Sender v1
+"$arTool" "1"
+rm -rf "1"
+
+testSetup "2"	# Sender patch v2
+"$diffTool" "1$archiveSuffix" "2"
+"$arTool" "2"
+mv "2$archiveSuffix" "2.sender$archiveSuffix"
+rm -rf "2"
+
+"$patchTool" "1$archiveSuffix"	# Recipient, patch v2 (auto name)
+"$arTool" "2"
+mv "2$archiveSuffix" "2.recipient$archiveSuffix"
+rm -rf "2"
+
+testSetup "3"	# Sender patch v3
+"$diffTool" "2.sender$archiveSuffix" "3"
+"$arTool" "3"
+mv "3$archiveSuffix" "3.sender$archiveSuffix"
+rm -rf "3"
+
+"$patchTool" "2.recipient$archiveSuffix" -p "Patch_(2.sender)_to_(3).xz"	# Recipient, patch v3
+"$arTool" "3"
+mv "3$archiveSuffix" "3.recipient$archiveSuffix"
+rm -rf "3"
+
+diff "3.sender$archiveSuffix" "3.recipient$archiveSuffix" > /dev/null
+if [[ "$?" != 0 ]]; then err_report $LINENO; fi
+
+cd "$DIR" > /dev/null
+rm -rf "$baseDir"
+
 
 # --------------------------------------------------------------------------------
 # Test - Various command line options
@@ -225,7 +293,7 @@ rm delta.patch
 testSimple_Test
 
 # Clear
-cd - > /dev/null
+cd "$DIR" > /dev/null
 rm -rf "$baseDir"
 
 # --------------------------------------------------------------------------------
@@ -234,7 +302,7 @@ rm -rf "$baseDir"
 testSubdir_noLabel() {
 	# Setup
 	testSimple_Setup
-	cd - > /dev/null
+	cd "$DIR" > /dev/null
 
 	# Operate
 	"$diffTool" "$baseDir/1" "$baseDir/2"         # Build
@@ -247,7 +315,7 @@ testSubdir_noLabel() {
 	testSimple_Test
 
 	# Clear
-	cd - > /dev/null
+	cd "$DIR" > /dev/null
 	rm -rf "$baseDir"
 }
 
