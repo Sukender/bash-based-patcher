@@ -9,28 +9,28 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
 source "$DIR/bbp_config.sh" || exit 4
 
-if [ "$1" == "diff" ]; then
+if [ "${1:-}" == "diff" ]; then
 	shift
 	"$diffTool" "$@"
 	exit $?
 fi
-if [ "$1" == "patch" ]; then
+if [ "${1:-}" == "patch" ]; then
 	shift
 	"$patchTool" "$@"
 	exit $?
 fi
-if [ "$1" == "ar" ]; then
+if [ "${1:-}" == "ar" ]; then
 	shift
 	"$arTool" "$@"
 	exit $?
 fi
-if [ "$1" == "info" ]; then
+if [ "${1:-}" == "info" ]; then
 	shift
 	"$infoTool" "$@"
 	exit $?
 fi
 
-if [ "$1" == "--version" ]; then
+if [ "${1:-}" == "--version" ]; then
 	echo "$toolVersion"
 	exit 0
 fi
