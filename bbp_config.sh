@@ -167,7 +167,7 @@ chooseDelta() {
 }
 
 autoDetectedDelta() {
-	local d="$("$infoTool" "$1")"
+	local d=$("$infoTool" "$1")
 	chooseDelta_explicit "$d" "$d"
 	if [ -n "${delta:-}" ]; then return; fi
 
@@ -201,7 +201,9 @@ readBase_sub() {
 
 	# Handling special case of "empty source"
 	if [[ "$dir" == "/dev/null" ]] || [[ "$dir" == "null" ]]; then
-		echo "Notice: Initial release: Using and empty source."
+		if (( $verbosity >= 1 )) ; then
+			echo "Notice: Using and empty source (initial release)."
+		fi
 		echo -n "" > "$outFile" &
 		return
 	fi
