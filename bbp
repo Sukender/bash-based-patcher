@@ -30,11 +30,15 @@ if [[ "${1:-}" == "info" ]]; then
 	exit $?
 fi
 
+
 if [[ "${1:-}" == "--version" ]] || [[ "${1:-}" == "version" ]]; then
 	echo "$toolVersion"
 	exit 0
 fi
-
+if [[ "${1:-}" == "--man" ]] || [[ "${1:-}" == "man" ]]; then
+	displayDoc
+	exit 0
+fi
 
 echo ""
 echo "$toolName"
@@ -47,13 +51,15 @@ echo "  bbp --version"
 echo "    Displays a short (parsable) version information and exits."
 echo "  bbp --help"
 echo "    This help."
+echo "  bbp --man"
+echo "    Displays all documentation available and exits."
 echo ""
 echo "For more information on a tool, type:"
 echo "   bbp TOOL --help"
 echo "   Example: bbp diff --help"
 echo ""
 
-if [[ "${1:-}" == "--help" ]] || [[ "${1:-}" == "-h" ]]; then
+if [[ "${1:-}" == "--help" ]] || [[ "${1:-}" == "help" ]] || [[ "${1:-}" == "-h" ]]; then
 	exit 0
 else
 	echo "Error: Please select your tool!"
