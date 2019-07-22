@@ -96,12 +96,11 @@ fi
 	# wget "$patchUrl" -O "$patchfile" || exit 3
 # fi
 
-res="$(file -Zb "$patchfile")"
-#if [[ "$res" ~= ^rdiff\  ]]; then
-if [[ "$res" = "rdiff network-delta data" ]]; then
+res="$(file -Zkb "$patchfile")"
+if [[ "$res" =~ "rdiff network-delta data" ]]; then
 	echo "rdiff"
 else
-	if [[ "$res" = "VCDIFF binary diff" ]]; then
+	if [[ "$res" =~ "VCDIFF binary diff" ]]; then
 		echo "xdelta3"
 	else
 		echo "UNKNOWN_patch_format"
