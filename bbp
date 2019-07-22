@@ -9,28 +9,28 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"		# Script dir
 source "$DIR/bbp_config.sh" || exit 4
 
-if [ "${1:-}" == "diff" ]; then
+if [[ "${1:-}" == "diff" ]] || [[ "${1:-}" == "sub" ]]; then
 	shift
 	"$diffTool" "$@"
 	exit $?
 fi
-if [ "${1:-}" == "patch" ]; then
+if [[ "${1:-}" == "patch" ]] || [[ "${1:-}" == "add" ]]; then
 	shift
 	"$patchTool" "$@"
 	exit $?
 fi
-if [ "${1:-}" == "ar" ]; then
+if [[ "${1:-}" == "ar" ]] || [[ "${1:-}" == "archive" ]]; then
 	shift
 	"$arTool" "$@"
 	exit $?
 fi
-if [ "${1:-}" == "info" ]; then
+if [[ "${1:-}" == "info" ]]; then
 	shift
 	"$infoTool" "$@"
 	exit $?
 fi
 
-if [ "${1:-}" == "--version" ]; then
+if [[ "${1:-}" == "--version" ]] || [[ "${1:-}" == "version" ]]; then
 	echo "$toolVersion"
 	exit 0
 fi
@@ -41,15 +41,19 @@ echo "$toolName"
 echo "Tools to patch directories."
 echo ""
 echo "Syntax:"
-echo "  bbp tool [tools_arguments]"
-echo "  Where tool is one of: diff, patch, ar, info"
+echo "  bbp TOOL [tools_arguments]"
+echo "    Where TOOL is one of: diff, patch, ar, info"
+echo "  bbp --version"
+echo "    Displays a short (parsable) version information and exits."
+echo "  bbp --help"
+echo "    This help."
 echo ""
-echo "For more information type:"
-echo "   bbp tool --help"
+echo "For more information on a tool, type:"
+echo "   bbp TOOL --help"
 echo "   Example: bbp diff --help"
 echo ""
 
-if [ "${1:-}" == "--help" ] || [ "${1:-}" == "-h" ]; then
+if [[ "${1:-}" == "--help" ]] || [[ "${1:-}" == "-h" ]]; then
 	exit 0
 else
 	echo "Error: Please select your tool!"
