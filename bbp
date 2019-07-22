@@ -49,7 +49,7 @@ echo "   bbp tool --help"
 echo "   Example: bbp diff --help"
 echo ""
 
-if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+if [ "${1:-}" == "--help" ] || [ "${1:-}" == "-h" ]; then
 	exit 0
 else
 	echo "Error: Please select your tool!"
