@@ -28,6 +28,7 @@ usage() {
 	echo "$toolName"
 	echo "Creates a compressed binary diff (patch) between two directories, or archives of directories."
 	echo "Archives (replacing directories) are not whatever a compressor can do: they must be tar-based, preferably generated from '$arToolName'."
+	echo "Note that the 'old' source can be 'null' or '/dev/null'; in this case the 'patch' will actually contain the full (initial) release."
 	echo
 	echo "Syntax:"
 	echo "  diff [options] old new"

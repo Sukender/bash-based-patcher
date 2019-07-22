@@ -198,6 +198,14 @@ readBase_sub() {
 	local dir="$1"
 	local outFile="$2"
 	local useSubshell="$3"
+
+	# Handling special case of "empty source"
+	if [[ "$dir" == "/dev/null" ]] || [[ "$dir" == "null" ]]; then
+		echo "Notice: Initial release: Using and empty source."
+		echo -n "" > "$outFile" &
+		return
+	fi
+
 	if [ -f "$dir" ]; then
 		# Archive (file) mode
 		if [[ "$dir" != *$archiveExtension ]]; then

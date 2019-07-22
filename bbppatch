@@ -26,6 +26,7 @@ usage() {
 	echo "$toolName"
 	echo "Applies a compressed binary diff (patch) on a directory or archive, creating a copy (ie. not in-place)."
 	echo "Archive (replacing 'old' directory) is not whatever a compressor can do: it must be tar-based, preferably generated from '$arToolName'."
+	echo "Note that the source can be 'null' or '/dev/null'; in this case a full (initial) release will be created from the 'patch'."
 	echo
 	echo "Syntax:"
 	echo "  patch [options] old"

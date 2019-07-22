@@ -49,7 +49,6 @@ bbp patch "oldDir.reference.tar.xz" -p "patch.xz"    # Apply, using a local patc
 ### To-do
 Stuff that should be done:
 - [```bbppatch```] Upon failure, cleanup everything: delete or rename patched directory, pipes and temporary downloaded patch.
-- [```bbpdiff```] Handle upload of patches (FTP or such).
 - [```bbpar```] Add progress bar for decompression.
 - ```make install``` should have a way to configure install path.
 - Add a resilience towards "small changes" in base directories (maintainer and users).
@@ -61,9 +60,9 @@ Stuff that should be done:
 
 ### Maybe to-do
 Nice ideas that may require too much amount of work regarding to the usefulness of the feature:
+- [```bbpdiff```] Handle upload of patches (FTP or such).
 - Add support for custom archives (anything, not just ".tar.something") as base directory (both for diff and patch).
   - This may imply issues in creating proper diffs.
-- Handling the initial release (such as a patch from "nothing" to "something"), especially if upload/download is handled.
 - Add an option for in-place patching.
 - Add better progress bars display.
 - [```bbppatch```] Add better patch name auto-detection: list available patches (with the same 'old' part), and try to guess the highest version if multiple are found.
