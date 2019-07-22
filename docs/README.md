@@ -9,6 +9,7 @@ Simple diff/patch of directories.
 - Maintain a (remote) directory up-to-date. The "maintainer" sends updates to "users". This is a kind of mirror (not a backup).
 - Distribute **small** updates (which may not take forever to upload/download), even when the target is hundreds of gigabytes.
 - Be a simple & basic toolset. This is why it is only a simple wrapper around commonly used GNU/Linux tools. Toolset is not necessarily user friendly nor error-proof.
+  - BBP uses either [xdelta3](http://xdelta.org/) or [rdiff](https://linux.die.net/man/1/rdiff) as a diff/patch tool.
 - Be used by anyone, anywhere (hence the choice of a [permissive license](COPYING.txt)).
 
 ## Features

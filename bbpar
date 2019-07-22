@@ -118,7 +118,7 @@ if (( $extract == 0 )); then
 
 	rm "$archive" 2> /dev/null || true
 	if (( $verbosity >= 1 )); then
-		size=$(getSize "v2")
+		size=$(getSize "$dir1")
 		if (( $has_pv != 0 )); then
 			$tarDir -f - --directory="$dir1" . | pv -N "Archive" -s $size | xz > "$archive"
 		else
