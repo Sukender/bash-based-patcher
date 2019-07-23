@@ -1,7 +1,8 @@
 # BBP: Sukender's Bash-Based Patcher
+![Cross-platform](https://img.shields.io/badge/platform-windows%20cygwin%20%7C%20linux-lightgrey.svg) [![license](https://img.shields.io/badge/license-WTFPL-green.svg)](https://github.com/Sukender/bash-based-patcher/blob/master/docs/LICENSE.md) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue.svg)](https://github.com/Sukender/bash-based-patcher/pulls)   
 
 ## Description
-Simple diff/patch of directories.
+Simple command-line diff/patch of directories.
 
 ![BBP principle schema](bbp-diff-patch-principle.svg "BBP helps sending small updates")
 
