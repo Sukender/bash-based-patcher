@@ -29,8 +29,8 @@ usage() {
 	echo "Can also extract those archives (and some others) using 'x' (as with tar)."
 	echo
 	echo "Syntax:"
-	echo "  ar [options] directory"
-	echo "  ar x [options] archive"
+	echo "  ar [options] DIRECTORY"
+	echo "  ar x [options] ARCHIVE"
 	echo
 	echo "Options:"
 	echo "  -h, --help"
@@ -46,8 +46,17 @@ usage() {
 	echo "      Please note that even level 0 is not absolutely quiet."
 	echo "  -0 to -9"
 	echo "      Sets the XZ compression level (default: 9)"
-	echo "  -x (or simply x)"
+	echo "  -x (or simply 'x')"
 	echo "      Extracts instead of archiving."
+	echo "  -o, --output OUT_PATH"
+	echo "      When compressing:"
+	echo "        Indicates the archive path (whith extension), such as '/someDir/myArchive.tar.xz'."
+	echo "        Warning: output archive will be overwritten without any prompt, if existing."
+	echo "        Default: DIRECTORY$archiveSuffix"
+	echo "      When extracting:"
+	echo "        Indicates the directory to write to (will be created, and files extracted directly in it)."
+	echo "        Extraction will fail if that sub-directory already exists."
+	echo "        Default: './ARCHIVE/', without '$archiveSuffix' suffix."
 	echo "  --"
 	echo "      Do not interpret any more arguments as options."
 	echo
@@ -78,6 +87,9 @@ case "${1:-}" in
 	x|-x)
 		shift; extract=1
 		;;
+	-o|--output)
+		shift; outPath="$1"; shift;
+		;;
 	--)
 		shift;
 		break;
@@ -106,6 +118,7 @@ if (( $extract == 0 )); then
 	fi
 
 	archive="$(basename "$dir1")$archiveSuffix"
+	if [[ -n "${outPath:-}" ]]; then archive="${outPath}" ; fi
 
 	if (( $verbosity >= 2 )); then
 		echo "$toolName"
@@ -135,6 +148,8 @@ else
 	archive="$dir1"
 	dir1="$(directoryNameFromArchive "$archive")"
 
+	if [[ -n "${outPath:-}" ]]; then dir1="${outPath}"; fi		# Use explicit output
+
 	if (( $verbosity >= 2 )); then
 		echo "$toolName"
 		echo $separatorDisplay
@@ -151,7 +166,7 @@ else
 		exit 1
 	fi
 
-	mkdir "$dir1"
+	mkdir -p "$dir1" > /dev/null
 
 	# Note that compresison level and '-T0' (multithreading) in XZ_OPT are useless here (won't be taken into account).
 	if (( $verbosity >= 1 )); then
