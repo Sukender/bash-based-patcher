@@ -24,6 +24,11 @@ if [[ "${1:-}" == "ar" ]] || [[ "${1:-}" == "archive" ]]; then
 	"$arTool" "$@"
 	exit $?
 fi
+if [[ "${1:-}" == "unar" ]] || [[ "${1:-}" == "unarchive" ]]; then
+	shift
+	"$arTool" x "$@"
+	exit $?
+fi
 if [[ "${1:-}" == "info" ]]; then
 	shift
 	"$infoTool" "$@"
