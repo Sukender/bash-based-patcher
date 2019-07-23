@@ -48,19 +48,6 @@ set -euo pipefail
 # --------------------------------------------------------------------------------
 # Documentation
 
-doc_dependencies="Dependencies:
-  - tar to make the directory a single stream (file).
-  - rdiff or xdelta3 to make the binary diff.
-  - named pipes to avoid storing intermediate files to disk (much faster: everything in memory).
-  - XZ (xz-utils) for tar to compress the output and make patches space-efficient.
-  - awk for some text processing.
-  - [patch only] wget to retreive a distant patch.
-  - (optional, recommended) pv, to display progress.
-  - (optional) make, to install, test, and package.
-All-in-one apt-style command line:
-  sudo apt install tar rdiff xdelta3 xz-utils wget pv awk
-"
-
 doc_errorCodes="Error codes:
   0: Ok
   1: Error in arguments
@@ -94,8 +81,6 @@ as the name is changed.
 "
 
 displayDoc() {
-	echo $separatorDisplay
-	echo "$doc_dependencies"
 	echo $separatorDisplay
 	echo "$doc_errorCodes"
 	echo $separatorDisplay

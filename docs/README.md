@@ -17,7 +17,9 @@ Simple command-line diff/patch of directories.
 - Create the smallest possible "patch" (difference) between two directories, and then apply the patch to a directory and get an updated one.
 - Support archives: ```tar.xz``` archives of directories can be used in place of the directories. The ```bbp ar``` command can be used to create compatible archives.
   - Only one archive type is currently supported. You will not be able to use your previously "zipped" folder unless you extract it.
-- Be "portable". Actually the bash scripts should run on (at least) common *GNU/Linux* distributions (Debian, Ubuntu...) and *Cygwin*.
+- Be "portable".
+  - Tested on a *GNU/Linux* distribution (Debian) and *Cygwin* (Windows).
+  - Actually the bash scripts should run on many other systems, including OSX.
   - Please note that even if targeted at the *bash* interpreter, this may work with others, or be easily adapted.
 
 ### Examples
@@ -45,6 +47,9 @@ bbp diff "oldDir.reference.tar.xz" "newDir"     # Now generate the patch, but us
 # On a second machine:
 bbp patch "oldDir.reference.tar.xz" -p "patch.xz"    # Apply, using a local patch (option '-p').
 ```
+
+## Installation and dependencies
+See the [installation documentation](INSTALL.md).
 
 ## Future work & ideas
 ### To-do
@@ -78,5 +83,5 @@ What is was not meant for:
 
 ## Author
 - **Sukender** (Benoit NEIL) - sukender at free dot fr
-- Maybe you? Feel free to participate!
+- Maybe you? Feel free to [participate](https://github.com/Sukender/bash-based-patcher/pulls)!
 See also the list of [contributors](https://github.com/Sukender/bash-based-patcher/contributors) who participated in this project.
