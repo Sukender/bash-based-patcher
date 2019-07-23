@@ -10,7 +10,7 @@ Simple diff/patch of directories.
 - Distribute **small** updates (which may not take forever to upload/download), even when the target is hundreds of gigabytes.
 - Be a simple & basic toolset. This is why it is only a simple wrapper around commonly used GNU/Linux tools. Toolset is not necessarily user friendly nor error-proof.
   - BBP uses either [xdelta3](http://xdelta.org/) or [rdiff](https://linux.die.net/man/1/rdiff) as a diff/patch tool.
-- Be used by anyone, anywhere (hence the choice of a [permissive license](COPYING.txt)).
+- Be used by anyone, anywhere (hence the choice of a [permissive license](LICENSE.md)).
 
 ## Features
 - Create the smallest possible "patch" (difference) between two directories, and then apply the patch to a directory and get an updated one.
