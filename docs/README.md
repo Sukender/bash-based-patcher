@@ -76,6 +76,24 @@ bbp patch "oldDir.reference.tar.xz"             # Apply on an archive (also work
 ## Installation and dependencies
 See the [installation documentation](INSTALL.md).
 
+## Documentation
+Each script can print its own documentation, via the usual ```--help``` argument:
+- Type ```bbp --help``` to start.
+- Type ```bbp TOOL --help``` to get the documentation for the given *TOOL*.
+Please note the ```--man``` argument will give you additional and more technical information.
+
+### Tools and aliases
+Here is a brief description of each tool, alongside with are aliases (synonyms) for some commands:
+- **diff** generates the patch by finding differences.
+  - ```bbpdiff```, ```bbp diff```, ```bbp sub``` (stands for "subtract")
+- **patch** applies a patch.
+  - ```bbppatch```, ```bbp patch```, ```bbp add```, ```bbp apply```
+- **ar** creates compatible archives.
+  - ```bbpar```, ```bbp ar```, ```bbp archive```
+  - Also, ```bbp unar``` and ```bbp unarchive``` stand for ```bbpar -x``` (extract archive)
+- **info** prints information about a patch (the choosen underlying tool used to create it).
+  - ```bbpinfo```, ```bbp info```
+
 ## Future work & ideas
 ### To-do
 Stuff that should be done:
@@ -90,6 +108,7 @@ Stuff that should be done:
 - Allow exclusions, to "skip" paths (files or directories), as if they were removed from the base ('old'). This would allow patching a **part** of a directory.
   - Open question: how can we be sure to get the same filter when applying the patch?
 - Add a true '*man*' page, or at least make ```man bbp``` trigger some help display.
+- Add colors to outputs, as well as a universal ```--no-color``` option to disable it.
 
 ### Maybe to-do
 Nice ideas that may require too much amount of work regarding to the usefulness of the feature:
@@ -106,7 +125,7 @@ Nice ideas that may require too much amount of work regarding to the usefulness 
 
 ### Won't-do
 What is was not meant for:
-- The toolset is not designed to get cool/beautiful installers. This is only an ugly command line maintaining two directories. Maybe building a GUI *ontop* of it would be clever.
+- The toolset is not designed to get cool/beautiful installers. This is only an ugly command line maintaining two directories. Maybe building a GUI *ontop* of it would be clever (*ncurses*-like could be an option).
 
 ## Author
 - **Sukender** (Benoit NEIL) - sukender at free dot fr

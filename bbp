@@ -14,7 +14,7 @@ if [[ "${1:-}" == "diff" ]] || [[ "${1:-}" == "sub" ]]; then
 	"$diffTool" "$@"
 	exit $?
 fi
-if [[ "${1:-}" == "patch" ]] || [[ "${1:-}" == "add" ]]; then
+if [[ "${1:-}" == "patch" ]] || [[ "${1:-}" == "add" ]] || [[ "${1:-}" == "apply" ]]; then
 	shift
 	"$patchTool" "$@"
 	exit $?
@@ -63,6 +63,14 @@ echo "For more information on a tool, type:"
 echo "   bbp TOOL --help"
 echo "   Example: bbp diff --help"
 echo ""
+echo "Aliases:"
+echo "  bbpdiff, bbp diff, bbp sub"
+echo "  bbppatch, bbp patch, bbp add, bbp apply"
+echo "  bbpar, bbp ar, bbp archive"
+echo "    (extract archive) bbpar -x, bbp unar, bbp unarchive"
+echo "  bbpinfo, bbp info"
+echo ""
+
 
 if [[ "${1:-}" == "--help" ]] || [[ "${1:-}" == "help" ]] || [[ "${1:-}" == "-h" ]]; then
 	exit 0
